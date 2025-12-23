@@ -1,0 +1,9 @@
+[ {
+  "id" : "EMP003",
+  "name" : "Rohit",
+  "salary" : 50000.0
+}, {
+  "id" : "EMP004",
+  "name" : "Rineesha",
+  "salary" : 60000.0
+} ]
