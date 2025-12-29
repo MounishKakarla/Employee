@@ -1,8 +1,8 @@
 package com.employee.model;
 
-import java.util.Set;
+
 import com.employee.security.Role;
-import com.employee.security.Permission;
+
 
 public class User {
 

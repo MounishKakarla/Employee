@@ -2,7 +2,10 @@ package com.employee.dao;
 
 import java.util.Set;
 
-import com.employee.exception.*;
+
+import com.employee.exception.DataAccessException;
+import com.employee.exception.DuplicateEmployeeException;
+import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.Employee;
 
 public interface EmployeeDao {
