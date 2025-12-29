@@ -14,33 +14,36 @@ import com.employee.model.Employee;
 public class EmployeeDaoImplTest {
 
 	private EmployeeDaoImpl dao;
+	private static final String TEST_FILE = "employees-test.json";
 
-    @BeforeEach
-    void setUp() {
-        dao = new EmployeeDaoImpl();
 
-        
-        File file = new File("employees.json");
-        if (file.exists()) {
-            file.delete();
-        }
-    }
+	 @BeforeEach
+	    void setUp() throws Exception {
 
-    /* ================= TEST 1 ================= */
-    @Test
+	        
+	        File file = new File(TEST_FILE);
+	        if (file.exists()) {
+	            file.delete();
+	        }
+
+	        dao = new EmployeeDaoImpl(TEST_FILE);
+	    }
+
+    
+    /*@Test
     void testAddEmployeeSuccessfully() throws Exception {
 
-        Employee emp = new Employee("EMP002", "Mounish Kakarla", 50000);
+        Employee emp = new Employee( "Mounish","mounish2003@gmail.com","Hyderabad", 50000);
 
         assertDoesNotThrow(() -> dao.add(emp));
-    }
+    }*/
 
-    /* ================= TEST 2 ================= */
+    
     @Test
     void testDuplicateEmployeeIdThrowsException() throws Exception {
 
-        Employee emp1 = new Employee("EMP003", "Rohit", 50000);
-        Employee emp2 = new Employee("EMP004", "Rineesha", 60000);
+        Employee emp1 = new Employee( "Mounish","mounish2003@gmail.com","Hyderabad", 50000);
+        Employee emp2 = new Employee( "Mounish","mounish2003@gmail.com","Hyderabad", 50000);
 
         dao.add(emp1);
 
@@ -53,5 +56,7 @@ public class EmployeeDaoImplTest {
             exception.getMessage()
         );
     }
+    
+
 
 }

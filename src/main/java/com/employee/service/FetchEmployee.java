@@ -24,7 +24,7 @@ public class FetchEmployee implements EmployeeExecute {
     @Override
     public void execute() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCHALL)) {
+        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEE)) {
             System.out.println("Access Denied!");
             return;
         }
@@ -41,13 +41,13 @@ public class FetchEmployee implements EmployeeExecute {
 
         } catch (DataAccessException e) {
             System.out.println("❌ Fetch All Failed: " + e.getMessage());
-            e.printStackTrace(); // TEMP: remove later
+            e.printStackTrace(); 
         }
     }
 
         public void fetchByName() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCHBYNAME)) {
+        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEEBYNAME)) {
             System.out.println("Access Denied! Only Admin and HR can Fetch By Name");
             return;
         }
@@ -67,14 +67,14 @@ public class FetchEmployee implements EmployeeExecute {
 
         } catch (DataAccessException e) {
             System.out.println("❌ Fetch By Name Failed: " + e.getMessage());
-            e.printStackTrace(); // TEMP
+            e.printStackTrace(); 
         }
     }
 
     
     public void fetchBySalary() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCHBYSALARY)) {
+        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEEBYSALARY)) {
             System.out.println("Access Denied! Only Admin and HR can Fetch By Salary");
             return;
         }

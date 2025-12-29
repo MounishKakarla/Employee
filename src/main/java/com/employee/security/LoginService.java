@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.employee.model.User;
+import com.employee.util.PasswordUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,7 +29,7 @@ public class LoginService {
                 File file = new File(FILE_PATH);
 
                 if (!file.exists()) {
-                    System.out.println("❌ users.json file not found");
+                    System.out.println("users.json file not found");
                     continue;
                 }
 
@@ -38,8 +39,8 @@ public class LoginService {
                 );
 
                 for (User user : users) {
-                    if (user.getUserName().equals(inputUserName)
-                            && user.getPassword().equals(inputPassword)) {
+                    if (user.getUsername().equals(inputUserName)
+                            && user.getPassword().equals(PasswordUtil.encrypt(inputPassword))) {
 
                         System.out.println("Login Successful");
                         return user;

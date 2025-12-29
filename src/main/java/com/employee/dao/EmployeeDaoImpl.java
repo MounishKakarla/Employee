@@ -9,24 +9,33 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 
 public class EmployeeDaoImpl implements EmployeeDao {
-
-    private static final File FILE = new File("employees.json");
-    //it is main class to read/write JSON
+    private final File FILE;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    
+    public EmployeeDaoImpl() {
+        this.FILE = new File("employees.json");
+    }
+
+    
+    public EmployeeDaoImpl(String filePath) {
+        this.FILE = new File(filePath);
+    }
+
+
+
     //Reads employees.json,Ensures JSON is an array,Returns ArrayNode for modification
     private ArrayNode readArray() throws DataAccessException {
         try {
-            //System.out.println("Reading employees from: " + FILE.getAbsolutePath());
-
-            if (!FILE.exists()) {
-                System.out.println("employees.json not found, returning empty list");
-                return mapper.createArrayNode();
+            if (!FILE.exists() || FILE.length() == 0) {
+                return mapper.createArrayNode(); 
             }
 
             JsonNode node = mapper.readTree(FILE);
 
-            if (!node.isArray()) {
-                throw new RuntimeException("employees.json root is not an array");
+            if (node == null || !node.isArray()) {
+                
+                return mapper.createArrayNode();
             }
 
             return (ArrayNode) node;
@@ -35,6 +44,23 @@ public class EmployeeDaoImpl implements EmployeeDao {
             throw new DataAccessException("Failed to read employees.json", e);
         }
     }
+
+    private String generateNextEmployeeId(ArrayNode array) {
+
+        int max = 0;
+
+        for (JsonNode node : array) {
+            String id = node.get("id").asText(); 
+
+            if (id.startsWith("EMP")) {
+                int num = Integer.parseInt(id.substring(3)); 
+                max = Math.max(max, num);
+            }
+        }
+
+        return String.format("EMP%03d", max + 1);
+    }
+
 
 
 
@@ -53,18 +79,32 @@ public class EmployeeDaoImpl implements EmployeeDao {
             throws DuplicateEmployeeException, DataAccessException {
 
         ArrayNode array = readArray();
-        for (JsonNode n : array)
-            if (n.get("id").asText().equalsIgnoreCase(e.getId()))
-                throw new DuplicateEmployeeException("Employee with similar id exists,use another id.Thank You!!");
+        for (JsonNode n : array) {
+            if (n.get("name").asText().equalsIgnoreCase(e.getName())) {
+                throw new DuplicateEmployeeException(
+                    "Employee with similar name exists, use another name. Thank You!!"
+                );
+            }
+        }
+
+        
+        String newId = generateNextEmployeeId(array);
 
         ObjectNode obj = mapper.createObjectNode();
-        obj.put("id", e.getId());
+        obj.put("id", newId);
         obj.put("name", e.getName());
+        obj.put("email", e.getEmail());
+        obj.put("address", e.getAddress());
         obj.put("salary", e.getSalary());
 
         array.add(obj);
         writeArray(array);
+
+        
+        
+        
     }
+
 
     @Override
     public void updateEmployee(Employee e)
@@ -73,8 +113,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
         ArrayNode array = readArray();
         for (JsonNode n : array) {
         	if (n.get("id").asText().equalsIgnoreCase(e.getId())) {
+
                 ObjectNode o = (ObjectNode) n;
                 o.put("name", e.getName());
+                o.put("email", e.getEmail());
+                o.put("address", e.getAddress());
                 o.put("salary", e.getSalary());
                 writeArray(array);
                 return;
@@ -89,7 +132,8 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
         ArrayNode array = readArray();
         for (JsonNode n : array) {
-            if (n.get("id").asText() == id) {
+        	if (n.get("id").asText().equalsIgnoreCase(id)) {
+ 
             	//partial update
                 ((ObjectNode) n).put("name", name);
                 writeArray(array);
@@ -104,8 +148,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
             throws EmployeeNotFoundException, DataAccessException {
 
         ArrayNode array = readArray();
+
         for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).get("id").asText() == id) {
+            if (array.get(i).get("id").asText().equalsIgnoreCase(id)) {
                 array.remove(i);
                 writeArray(array);
                 return;

@@ -3,24 +3,34 @@ package com.employee.service;
 import com.employee.exception.*;
 import com.employee.execute.EmployeeExecute;
 import com.employee.security.Permission;
+import com.employee.util.IdValidator;
+import com.employee.model.User;
+import com.employee.dao.EmployeeDao;
+
 
 public class DeleteEmployee extends BaseService implements EmployeeExecute {
 
-    public DeleteEmployee(com.employee.model.User user, com.employee.dao.EmployeeDao dao) {
+    public DeleteEmployee(User user, EmployeeDao dao) {
         super(user, dao);
     }
 
     @Override
     public void execute() {
-        if (!hasAccess(Permission.DELETE)) return;
+        if (!hasAccess(Permission.DELETE_EMPLOYEE)) return;
 
         try {
-            System.out.print("ID: ");
-            String id = sc.next();
+        	System.out.print("Enter Employee ID (EMPxxx): ");
+        	String id = sc.next();
 
-            dao.delete(id);
-            System.out.println("Employee Deleted");
+        	if (!IdValidator.isValid(id)) {
+        	    System.out.println("Invalid ID format. Use EMP001 style.");
+        	    return;
+        	}
 
+        	dao.delete(id);
+        	System.out.println("Employee is Deleted successfully");
+
+           
         } catch (EmployeeNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (DataAccessException e) {

@@ -4,26 +4,31 @@ import com.employee.exception.*;
 import com.employee.execute.EmployeeExecute;
 import com.employee.model.Employee;
 import com.employee.security.Permission;
-
+import com.employee.model.User;
+import com.employee.dao.EmployeeDao;
 public class AddEmployee extends BaseService implements EmployeeExecute {
 
-    public AddEmployee(com.employee.model.User user, com.employee.dao.EmployeeDao dao) {
+    public AddEmployee(User user, EmployeeDao dao) {
         super(user, dao);
     }
 
     @Override
     public void execute() {
-        if (!hasAccess(Permission.ADD)) return;
+        if (!hasAccess(Permission.ADD_EMPLOYEE)) return;
 
         try {
-            System.out.print("ID: ");
-            String id = sc.next();
+           
             System.out.print("Name: ");
             String name = sc.next();
+            System.out.println("Email:");
+            String email=sc.next();
+            System.out.println("Address:");
+            String address=sc.next();
             System.out.print("Salary: ");
             double salary = sc.nextDouble();
+            
 
-            dao.add(new Employee(id, name, salary));
+            dao.add(new Employee( name,email, address, salary));
             System.out.println("Employee Added");
 
         } catch (DuplicateEmployeeException e) {

@@ -1,17 +1,36 @@
 package com.employee.security;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RolePermission {
-	public static final Map<Role,EnumSet<Permission>>map=new HashMap<>();
-	static {
-		map.put(Role.ADMIN,EnumSet.allOf(Permission.class));
-		map.put(Role.HR,EnumSet.of(Permission.ADD,Permission.UPDATE,Permission.UPDATEBYNAME,Permission.DELETE,Permission.FETCHALL,Permission.FETCHBYNAME,Permission.FETCHBYSALARY));
-		map.put(Role.EMPLOYEE,EnumSet.of(Permission.FETCHALL) );
-	}
-	public static boolean hasPermission(Role role,Permission permission) {
-		return map.get(role).contains(permission);	}
 
+    private static final Map<Role, Set<Permission>> MAP = new HashMap<>();
+
+    static {
+        MAP.put(Role.SUPERADMIN, EnumSet.allOf(Permission.class));
+
+        MAP.put(Role.ADMIN, EnumSet.of(
+                
+                Permission.ADD_EMPLOYEE,
+                Permission.UPDATE_EMPLOYEE,
+                Permission.FETCH_EMPLOYEEBYNAME,
+                Permission.FETCH_EMPLOYEEBYSALARY,
+                Permission.FETCH_EMPLOYEE
+        ));
+
+        MAP.put(Role.MANAGER, EnumSet.of(
+                
+                Permission.UPDATE_EMPLOYEE,
+                Permission.FETCH_EMPLOYEE
+        ));
+
+        MAP.put(Role.EMPLOYEE, EnumSet.of(
+                Permission.UPDATE_SELF_PROFILE,
+                Permission.UPDATE_SELF_PASSWORD,
+                Permission.FETCH_EMPLOYEE
+        ));
+    }
+
+    public static boolean hasPermission(Role role,Permission permission) {
+		return MAP.get(role).contains(permission);	}
 }

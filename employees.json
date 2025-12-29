@@ -1,9 +1,7 @@
 [ {
-  "id" : "EMP003",
-  "name" : "Rohit",
-  "salary" : 50000.0
-}, {
-  "id" : "EMP004",
-  "name" : "Rineesha",
+  "id" : "EMP001",
+  "name" : "Mouni",
+  "email" : "mounish2003gmail.com",
+  "address" : "Hyderabad",
   "salary" : 60000.0
 } ]
