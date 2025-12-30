@@ -24,7 +24,7 @@ public class FetchEmployee implements EmployeeExecute {
     @Override
     public void execute() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEE)) {
+        if (!RolePermission.hasPermission(user.getRoles(), Permission.FETCH_EMPLOYEE)) {
             System.out.println("Access Denied!");
             return;
         }
@@ -47,7 +47,7 @@ public class FetchEmployee implements EmployeeExecute {
 
         public void fetchByName() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEEBYNAME)) {
+        if (!RolePermission.hasPermission(user.getRoles(), Permission.FETCH_EMPLOYEEBYNAME)) {
             System.out.println("Access Denied! Only Admin and HR can Fetch By Name");
             return;
         }
@@ -74,7 +74,7 @@ public class FetchEmployee implements EmployeeExecute {
     
     public void fetchBySalary() {
 
-        if (!RolePermission.hasPermission(user.getRole(), Permission.FETCH_EMPLOYEEBYSALARY)) {
+        if (!RolePermission.hasPermission(user.getRoles(), Permission.FETCH_EMPLOYEEBYSALARY)) {
             System.out.println("Access Denied! Only Admin and HR can Fetch By Salary");
             return;
         }

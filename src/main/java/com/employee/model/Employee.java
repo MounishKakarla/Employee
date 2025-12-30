@@ -26,6 +26,13 @@ public class Employee implements Comparable<Employee> {
      
         this.salary = salary;
     }
+    public Employee(String id,String name,String email,String address,double salary){
+    	this.id=id;
+    	this.name=name;
+    	this.email=email;
+    	this.address=address;
+    	this.salary=salary;
+    }
     public Employee(String id,String name,double salary) {
     	this.id=id;
     	this.name=name;

@@ -34,6 +34,13 @@ public class RolePermission {
         ));
     }
 
-    public static boolean hasPermission(Role role,Permission permission) {
-		return MAP.get(role).contains(permission);	}
+    
+    public static boolean hasPermission(Set<Role> roles, Permission permission) {
+        for (Role role : roles) {
+            if (MAP.getOrDefault(role, Set.of()).contains(permission)) {
+                return true; 
+            }
+        }
+        return false;
+    }
 }

@@ -25,7 +25,8 @@ public class UpdateEmployee extends BaseService implements EmployeeExecute {
 
         try {
             if (ch == 1) {
-                
+                System.out.print("EmpId:");
+                String id=sc.next();
                 System.out.print("Name: ");
                 String name = sc.next();
                 System.out.print("Email: ");
@@ -35,7 +36,7 @@ public class UpdateEmployee extends BaseService implements EmployeeExecute {
                 System.out.print("Salary: ");
                 double salary = sc.nextDouble();
 
-                dao.updateEmployee(new Employee( name, email, address, salary));
+                dao.updateEmployee(new Employee( id,name, email, address, salary));
                 System.out.println("Employee Updated");
 
             } else if (ch == 2) {

@@ -31,7 +31,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
     //Reads employees.json,Ensures JSON is an array,Returns ArrayNode for modification
-    private ArrayNode readArray() throws DataAccessException {
+    private ArrayNode fetchEmployeeData()throws DataAccessException {
         try {
             if (!FILE.exists() || FILE.length() == 0) {
                 return mapper.createArrayNode(); 
@@ -70,11 +70,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 
 
-    private void writeArray(ArrayNode array) throws DataAccessException {
+    private void persistEmployees(ArrayNode employees) throws DataAccessException {
         try {
         	//Saves updated data to employees.json,Uses pretty printing for readability
         	//serialization :Converting Java objects into Json files 
-            mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, array);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, employees);
         } catch (Exception e) {
             throw new DataAccessException("Write failed", e);
         }
@@ -84,7 +84,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public void add(Employee e)
             throws DuplicateEmployeeException, DataAccessException {
 
-        ArrayNode array = readArray();
+        ArrayNode array = fetchEmployeeData();
         for (JsonNode n : array) {
             if (n.get("name").asText().equalsIgnoreCase(e.getName())) {
                 throw new DuplicateEmployeeException(
@@ -104,7 +104,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
         obj.put("salary", e.getSalary());
 
         array.add(obj);
-        writeArray(array);
+        persistEmployees(array);
 
         
         
@@ -116,16 +116,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public void updateEmployee(Employee e)
             throws EmployeeNotFoundException, DataAccessException {
 
-        ArrayNode array = readArray();
+        ArrayNode array = fetchEmployeeData();
         for (JsonNode n : array) {
         	if (n.get("id").asText().equalsIgnoreCase(e.getId())) {
 
                 ObjectNode o = (ObjectNode) n;
+                
                 o.put("name", e.getName());
                 o.put("email", e.getEmail());
                 o.put("address", e.getAddress());
                 o.put("salary", e.getSalary());
-                writeArray(array);
+                persistEmployees(array);
                 return;
             }
         }
@@ -136,13 +137,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public void updateNameById(String id, String name)
             throws EmployeeNotFoundException, DataAccessException {
 
-        ArrayNode array = readArray();
+        ArrayNode array = fetchEmployeeData();
         for (JsonNode n : array) {
         	if (n.get("id").asText().equalsIgnoreCase(id)) {
  
             	//partial update
                 ((ObjectNode) n).put("name", name);
-                writeArray(array);
+                persistEmployees(array);
                 return;
             }
         }
@@ -153,12 +154,12 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public void delete(String id)
             throws EmployeeNotFoundException, DataAccessException {
 
-        ArrayNode array = readArray();
+        ArrayNode array = fetchEmployeeData();
 
         for (int i = 0; i < array.size(); i++) {
             if (array.get(i).get("id").asText().equalsIgnoreCase(id)) {
                 array.remove(i);
-                writeArray(array);
+                persistEmployees(array);
                 return;
             }
         }
@@ -169,7 +170,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Set<Employee> findAll() throws DataAccessException {
         Set<Employee> set = new TreeSet<>();
         try {
-            for (JsonNode n : readArray())
+            for (JsonNode n : fetchEmployeeData())
             	//De-serialization :convert Json back to Java Objects
                 set.add(mapper.treeToValue(n, Employee.class));
             return set;
@@ -181,7 +182,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     @Override
     public Employee findById(String id) throws DataAccessException {
         try {
-            for (JsonNode n : readArray()) {
+            for (JsonNode n : fetchEmployeeData()) {
                 if (n.get("id").asText().equalsIgnoreCase(id)) {
                     return mapper.treeToValue(n, Employee.class);
                 }
@@ -197,7 +198,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Set<Employee> findByName(String name) throws DataAccessException {
         Set<Employee> set = new TreeSet<>();
         try {
-            for (JsonNode n : readArray())
+            for (JsonNode n :fetchEmployeeData())
                 if (n.get("name").asText().equalsIgnoreCase(name))
                     set.add(mapper.treeToValue(n, Employee.class));
             return set;
@@ -210,7 +211,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Set<Employee> findBySalary(double salary) throws DataAccessException {
         Set<Employee> set = new TreeSet<>();
         try {
-            for (JsonNode n : readArray())
+            for (JsonNode n : fetchEmployeeData())
                 if (n.get("salary").asDouble() == salary)
                     set.add(mapper.treeToValue(n, Employee.class));
             return set;

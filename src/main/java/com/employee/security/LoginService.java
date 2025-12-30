@@ -39,12 +39,12 @@ public class LoginService {
                 );
 
                 for (User user : users) {
-                    if (user.getUsername().equals(inputUserName)
-                            && user.getPassword().equals(PasswordUtil.encrypt(inputPassword))) {
+                	if (user.getUsername().equals(inputUserName)
+                	        && user.getPassword().equals(PasswordUtil.encrypt(inputPassword))) {
 
-                        System.out.println("Login Successful");
-                        return user;
-                    }
+                	    System.out.println("Login Successful");
+                	    return user;
+                	}
                 }
 
                 System.out.println(" Invalid credentials. Try again.\n");

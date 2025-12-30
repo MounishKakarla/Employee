@@ -17,13 +17,15 @@ public abstract class BaseService {
         this.user = user;
         this.dao = dao;
     }
+  
 
     protected boolean hasAccess(Permission p) {
-        if (!RolePermission.hasPermission(user.getRole(), p)) {
+        if (!RolePermission.hasPermission(user.getRoles(), p)) {
             System.out.println("Access Denied");
             return false;
         }
         return true;
     }
+
 }
 

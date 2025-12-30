@@ -1,7 +1,19 @@
 [ {
-  "id" : "EMP001",
+  "id" : "EMP002",
   "name" : "Mouni",
-  "email" : "mounish2003gmail.com",
+  "email" : "mounish@gmail.com",
+  "address" : "Hyderabd",
+  "salary" : 60000.0
+}, {
+  "id" : "EMP003",
+  "name" : "Kausthub",
+  "email" : "kausthub2005@gmail.com",
+  "address" : "Hyderabd",
+  "salary" : 60000.0
+}, {
+  "id" : "EMP004",
+  "name" : "TharunReddy",
+  "email" : "tharun2005@gmail.com",
   "address" : "Hyderabad",
   "salary" : 60000.0
 } ]
