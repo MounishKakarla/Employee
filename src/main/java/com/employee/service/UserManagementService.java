@@ -1,103 +1,69 @@
 package com.employee.service;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import com.employee.dao.UserDao;
+import com.employee.exception.DataAccessException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.Role;
-import com.employee.util.PasswordGenerator;
-import com.employee.util.PasswordUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserManagementService extends BaseService {
 
-    private static final File FILE = new File("users.json");
-    private final ObjectMapper mapper = new ObjectMapper();
+	private final UserDao userDao;
 
-    public UserManagementService(User user) {
-        super(user, null);
-    }
+	public UserManagementService(User user, UserDao userDao) {
+		super(user, null);
+		this.userDao = userDao;
+	}
 
-    
+	public void createUser() {
 
-    public void createUser() {
+		if (!hasAccess(Permission.CREATE_USER))
+			return;
 
-        if (!hasAccess(Permission.CREATE_USER)) return;
+		try {
+			System.out.print("Username: ");
+			String username = sc.next();
 
-        try {
-            System.out.print("Username: ");
-            String uname = sc.next();
+			System.out.print("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE: ");
+			String input = sc.next();
 
-            System.out.println("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE");
-            String input = sc.next();
+			Set<Role> roles = new HashSet<>();
+			for (String r : input.split(",")) {
+				roles.add(Role.valueOf(r.trim().toUpperCase()));
+			}
 
-            Set<Role> roles = new HashSet<>();
-            for (String r : input.split(",")) {
-                roles.add(Role.valueOf(r.trim().toUpperCase()));
-            }
+			userDao.createUser(username, roles);
 
-            List<User> users = FILE.exists()
-                    ? mapper.readValue(
-                            FILE,
-                            mapper.getTypeFactory()
-                                  .constructCollectionType(List.class, User.class))
-                    : new ArrayList<>();
+		} catch (DataAccessException e) {
+			System.out.println("User creation failed");
+		}
+	}
 
-            String tempPwd = PasswordGenerator.generate();
-            users.add(new User(uname, PasswordUtil.encrypt(tempPwd), roles));
+	public void assignRole() {
 
-            mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, users);
+		if (!hasAccess(Permission.ASSIGN_ROLE))
+			return;
 
-            System.out.println("User created successfully");
-            System.out.println("Temporary Password: " + tempPwd);
+		try {
+			System.out.print("Username: ");
+			String username = sc.next();
 
-        } catch (Exception e) {
-            System.out.println("User creation failed: " + e.getMessage());
-        }
-    }
+			System.out.print("New roles (comma separated): ");
+			String input = sc.next();
 
-  
+			Set<Role> roles = new HashSet<>();
+			for (String r : input.split(",")) {
+				roles.add(Role.valueOf(r.trim().toUpperCase()));
+			}
 
-    public void assignRole() {
+			userDao.assignRole(username, roles);
+			System.out.println("Roles updated successfully");
 
-        if (!hasAccess(Permission.ASSIGN_ROLE)) return;
-
-        try {
-            List<User> users = mapper.readValue(
-                    FILE,
-                    mapper.getTypeFactory()
-                          .constructCollectionType(List.class, User.class));
-
-            System.out.print("Username: ");
-            String uname = sc.next();
-
-            for (User u : users) {
-                if (u.getUsername().equalsIgnoreCase(uname)) {
-
-                    System.out.println("Enter roles (comma separated): ADMIN,MANAGER,EMPLOYEE");
-                    String input = sc.next();
-
-                    Set<Role> roles = new HashSet<>();
-                    for (String r : input.split(",")) {
-                        roles.add(Role.valueOf(r.trim().toUpperCase()));
-                    }
-
-                    u.setRoles(roles);
-
-                    mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, users);
-                    System.out.println("Roles updated successfully");
-                    return;
-                }
-            }
-
-            System.out.println("User not found");
-
-        } catch (Exception e) {
-            System.out.println("Role assignment failed: " + e.getMessage());
-        }
-    }
+		} catch (DataAccessException e) {
+			System.out.println("Role assignment failed");
+		}
+	}
 }

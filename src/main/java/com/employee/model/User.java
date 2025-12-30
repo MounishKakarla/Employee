@@ -43,7 +43,5 @@ public class User {
     }
 
     
-    public void setRole(Role role) {
-        this.roles = Set.of(role);
-    }
+    
 }

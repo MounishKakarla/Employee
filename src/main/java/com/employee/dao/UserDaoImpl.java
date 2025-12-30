@@ -1,5 +1,115 @@
 package com.employee.dao;
 
-public class UserDaoImpl {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
+import com.employee.exception.DataAccessException;
+import com.employee.model.User;
+import com.employee.security.Role;
+import com.employee.util.PasswordUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class UserDaoImpl implements UserDao {
+
+	private static final File FILE = new File("users.json");
+	private final ObjectMapper mapper = new ObjectMapper();
+
+	private List<User> fetchUsers() throws Exception {
+		if (!FILE.exists() || FILE.length() == 0) {
+			return new ArrayList<>();
+		}
+		return mapper.readValue(FILE, new TypeReference<List<User>>() {
+		});
+	}
+
+	private void persistUsers(List<User> users) throws Exception {
+		mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, users);
+	}
+
+	@Override
+	public void createUser(String username, Set<Role> roles) throws DataAccessException {
+
+		try {
+			List<User> users = fetchUsers();
+
+			String tempPassword = "Temp@" + System.currentTimeMillis();
+			String hashed = PasswordUtil.encrypt(tempPassword);
+
+			users.add(new User(username, hashed, roles));
+			persistUsers(users);
+
+			System.out.println("User created successfully");
+			System.out.println("Temporary Password: " + tempPassword);
+
+		} catch (Exception e) {
+			throw new DataAccessException("Create user failed", e);
+		}
+	}
+
+	@Override
+	public void assignRole(String username, Set<Role> roles) throws DataAccessException {
+
+		try {
+			List<User> users = fetchUsers();
+
+			for (User u : users) {
+				if (u.getUsername().equalsIgnoreCase(username)) {
+					u.setRoles(roles);
+					persistUsers(users);
+					return;
+				}
+			}
+			throw new RuntimeException("User not found");
+
+		} catch (Exception e) {
+			throw new DataAccessException("Assign role failed", e);
+		}
+	}
+
+	@Override
+	public void resetPassword(String username) throws DataAccessException {
+
+		try {
+			List<User> users = fetchUsers();
+
+			for (User u : users) {
+				if (u.getUsername().equalsIgnoreCase(username)) {
+					String temp = "Reset@" + UUID.randomUUID().toString().substring(0, 5);
+					u.setPassword(PasswordUtil.encrypt(temp));
+					persistUsers(users);
+
+					System.out.println("Temporary Password: " + temp);
+					return;
+				}
+			}
+			throw new RuntimeException("User not found");
+
+		} catch (Exception e) {
+			throw new DataAccessException("Reset password failed", e);
+		}
+	}
+
+	@Override
+	public void changePassword(String username, String newPassword) throws DataAccessException {
+
+		try {
+			List<User> users = fetchUsers();
+
+			for (User u : users) {
+				if (u.getUsername().equalsIgnoreCase(username)) {
+					u.setPassword(PasswordUtil.encrypt(newPassword));
+					persistUsers(users);
+					return;
+				}
+			}
+			throw new RuntimeException("User not found");
+
+		} catch (Exception e) {
+			throw new DataAccessException("Change password failed", e);
+		}
+	}
 }
