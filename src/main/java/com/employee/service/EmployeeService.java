@@ -7,7 +7,7 @@ import com.employee.model.Employee;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.util.PasswordUtil;
-import com.employee.util.UserFileUtil;
+
 import com.employee.dao.UserDao;
 
 public class EmployeeService extends BaseService {
