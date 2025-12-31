@@ -1,0 +1,19 @@
+[ {
+  "id" : "EMP001",
+  "name" : "Mounish",
+  "email" : "mounish2005@gmail.com",
+  "address" : "Hyderabad",
+  "salary" : 60000.0
+}, {
+  "id" : "EMP002",
+  "name" : "Rohit",
+  "email" : "rohit2005@gmail.com",
+  "address" : "Hyd",
+  "salary" : 60000.0
+}, {
+  "id" : "EMP003",
+  "name" : "kaustubh",
+  "email" : "kaustubh2004@gmail.com",
+  "address" : "Hyd",
+  "salary" : 60000.0
+} ]
