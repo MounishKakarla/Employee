@@ -30,13 +30,13 @@ public class EmployeeDaoImplTest {
 	    }
 
     
-    /*@Test
+    @Test
     void testAddEmployeeSuccessfully() throws Exception {
 
         Employee emp = new Employee( "Mounish","mounish2003@gmail.com","Hyderabad", 50000);
 
         assertDoesNotThrow(() -> dao.add(emp));
-    }*/
+    }
 
     
     @Test
