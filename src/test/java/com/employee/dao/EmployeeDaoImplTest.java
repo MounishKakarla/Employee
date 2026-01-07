@@ -10,13 +10,13 @@ import java.io.File;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.employee.dao.EmployeeDaoImpl;
+import com.employee.dao.file.FileEmployeeDaoImpl;
 import com.employee.exception.DuplicateEmployeeException;
 import com.employee.model.Employee;
 
 public class EmployeeDaoImplTest {
 
-	private EmployeeDaoImpl dao;
+	private FileEmployeeDaoImpl dao;
 	private static final String TEST_FILE = "employees-test.json";
 
 
@@ -29,7 +29,7 @@ public class EmployeeDaoImplTest {
 	            file.delete();
 	        }
 
-	        dao = new EmployeeDaoImpl(TEST_FILE);
+	        dao = new FileEmployeeDaoImpl(TEST_FILE);
 	    }
 
     

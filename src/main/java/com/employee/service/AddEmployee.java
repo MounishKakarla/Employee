@@ -30,13 +30,19 @@ public class AddEmployee extends BaseService implements EmployeeExecute {
             double salary = sc.nextDouble();
             
 
-            dao.add(new Employee( name,email, address, salary));
-            System.out.println("Employee Added");
+            Employee emp = new Employee(name, email, address, salary);
+            dao.add(emp);
+
+            
+            user.setId(emp.getId());
+            System.out.println("Employee Created with ID: " + emp.getId());
+
 
         } catch (DuplicateEmployeeException e) {
             System.out.println(e.getMessage());
         } catch (DataAccessException e) {
             System.out.println("System error");
+           
         }
     }
 }

@@ -21,13 +21,17 @@ public class EmployeeService extends BaseService {
 
     public void updateProfile() {
 
-        if (!hasAccess(Permission.UPDATE_SELF_PROFILE)) return;
+        if (!hasAccess(Permission.UPDATE_SELF_PROFILE)) {
+            System.out.println("Profile update not applicable");
+            return;
+        }
 
         try {
-            Employee emp = dao.findById(user.getUsername()); // or mapped empId
+            Employee emp = dao.findById(user.getId());
 
             if (emp == null) {
-                throw new EmployeeNotFoundException("Employee not found");
+                System.out.println("Employee record not found");
+                return;
             }
 
             System.out.print("Email: ");
@@ -40,10 +44,12 @@ public class EmployeeService extends BaseService {
             dao.updateEmployee(emp);
             System.out.println("Profile updated successfully");
 
-        } catch (EmployeeNotFoundException | DataAccessException e) {
+        } catch (Exception e) {
             System.out.println("Profile update failed");
+            e.printStackTrace();
         }
     }
+
 
     public void changePassword() {
 

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
+import com.employee.exception.DuplicateUserException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.Role;
@@ -18,7 +19,7 @@ public class UserManagementService extends BaseService {
 		this.userDao = userDao;
 	}
 
-	public void createUser() {
+	public void createUser()  throws DataAccessException,DuplicateUserException  {
 
 		if (!hasAccess(Permission.CREATE_USER))
 			return;
@@ -26,7 +27,8 @@ public class UserManagementService extends BaseService {
 		try {
 			System.out.print("Username: ");
 			String username = sc.next();
-
+			System.out.print("Employee ID (EMPxxx): ");
+			String id = sc.next();
 			System.out.print("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE: ");
 			String input = sc.next();
 
@@ -35,10 +37,11 @@ public class UserManagementService extends BaseService {
 				roles.add(Role.valueOf(r.trim().toUpperCase()));
 			}
 
-			userDao.createUser(username, roles);
+			userDao.createUser(username, id, roles);
 
-		} catch (DataAccessException e) {
+		} catch (DataAccessException se) {
 			System.out.println("User creation failed");
+			
 		}
 	}
 

@@ -92,7 +92,9 @@ public class Employee implements Comparable<Employee> {
         this.email = email;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setAddress(String address) {
     	this.address=address;

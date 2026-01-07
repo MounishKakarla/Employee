@@ -1,57 +1,38 @@
 package com.employee.security;
 
-import java.io.File;
-import java.util.List;
 import java.util.Scanner;
 
+import com.employee.dao.UserDao;
+import com.employee.exception.DataAccessException;
 import com.employee.model.User;
-import com.employee.util.PasswordUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Login {
 
-    private static final String FILE_PATH = "users.json";
+	private static final Scanner sc = new Scanner(System.in);
 
-    public static User login() {
+	public static User login(UserDao userDao) {
 
-        ObjectMapper mapper = new ObjectMapper();
-        Scanner sc = new Scanner(System.in);
+		while (true) {
+			try {
+				System.out.print("Username: ");
+				String username = sc.next().trim();
 
-        while (true) {
-            try {
-                System.out.print("Username: ");
-                String inputUserName = sc.next().trim();
+				System.out.print("Password: ");
+				String password = sc.next().trim();
 
-                System.out.print("Password: ");
-                String inputPassword = sc.next().trim();
+				User user = userDao.authenticate(username, password);
 
-                File file = new File(FILE_PATH);
+				if (user != null) {
+					System.out.println("Login Successful");
+					return user;
+				}
 
-                if (!file.exists()) {
-                    System.out.println("users.json file not found");
-                    continue;
-                }
+				System.out.println("Invalid credentials. Try again.\n");
 
-                List<User> users = mapper.readValue(
-                        file,
-                        new TypeReference<List<User>>() {}
-                );
-
-                for (User user : users) {
-                	if (user.getUsername().equals(inputUserName)
-                	        && user.getPassword().equals(PasswordUtil.encrypt(inputPassword))) {
-
-                	    System.out.println("Login Successful");
-                	    return user;
-                	}
-                }
-
-                System.out.println(" Invalid credentials. Try again.\n");
-
-            } catch (Exception e) {
-                System.out.println(" User file error: " + e.getMessage());
-            }
-        }
-    }
+			} catch (DataAccessException e) {
+				System.out.println("Login system error");
+				
+			}
+		}
+	}
 }

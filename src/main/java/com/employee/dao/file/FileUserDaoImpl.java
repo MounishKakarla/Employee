@@ -1,4 +1,4 @@
-package com.employee.dao;
+package com.employee.dao.file;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,15 +6,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
+import com.employee.exception.DuplicateUserException;
 import com.employee.model.User;
 import com.employee.security.Role;
 import com.employee.util.PasswordUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class UserDaoImpl implements UserDao {
-
+public class FileUserDaoImpl implements UserDao {
 	private static final File FILE = new File("users.json");
 	private final ObjectMapper mapper = new ObjectMapper();
 
@@ -31,15 +32,23 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public void createUser(String username, Set<Role> roles) throws DataAccessException {
+	public void createUser(String username,String id, Set<Role> roles) throws DataAccessException ,DuplicateUserException{
 
 		try {
 			List<User> users = fetchUsers();
+			
+	        for (User u : users) {
+	            if (u.getUsername().equalsIgnoreCase(username)) {
+	                throw new DuplicateUserException(
+	                    "User '" + username + "' already exists"
+	                );
+	            }
+	        }
 
 			String tempPassword = "Temp@" + System.currentTimeMillis();
 			String hashed = PasswordUtil.encrypt(tempPassword);
 
-			users.add(new User(username, hashed, roles));
+			users.add(new User(username,id, hashed, roles));
 			persistUsers(users);
 
 			System.out.println("User created successfully");
@@ -112,4 +121,28 @@ public class UserDaoImpl implements UserDao {
 			throw new DataAccessException("Change password failed", e);
 		}
 	}
+	@Override
+	public User authenticate(String username, String password)
+	        throws DataAccessException {
+
+	    try {
+	        List<User> users = fetchUsers();
+	        String encryptedInput = PasswordUtil.encrypt(password);
+
+	        for (User user : users) {
+	            if (user.getUsername().equals(username)
+	                && user.getPassword().equals(encryptedInput)) {
+	                return user;
+	            }
+	        }
+
+	        return null;
+
+	    } catch (Exception e) {
+	        throw new DataAccessException("Login failed", e);
+	    }
+	}
+
+
+
 }

@@ -1,29 +1,37 @@
 package com.employee.main;
 
 import com.employee.dao.EmployeeDao;
-import com.employee.dao.EmployeeDaoImpl;
 import com.employee.dao.UserDao;
-import com.employee.dao.UserDaoImpl;
+import com.employee.exception.DataAccessException;
+import com.employee.exception.DuplicateUserException;
 import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.RolePermission;
-import com.employee.service.*;
+import com.employee.service.AddEmployee;
+import com.employee.service.BaseService;
+import com.employee.service.DeleteEmployee;
+import com.employee.service.EmployeeService;
+import com.employee.service.FetchEmployee;
+import com.employee.service.PasswordResetService;
+import com.employee.service.UpdateEmployee;
+import com.employee.service.UserManagementService;
+
 
 public class MenuRouter {
-	private static   EmployeeDao dao = new EmployeeDaoImpl();
-	private static UserDao udao=new UserDaoImpl();
 
-    public static void start(User user) throws EmployeeNotFoundException {
-    	
+    public static void start(User user,
+                             EmployeeDao dao,
+                             UserDao udao)
+            throws EmployeeNotFoundException, DataAccessException, DuplicateUserException {
 
-        UserManagementService ums = new UserManagementService(user,udao);
-        PasswordResetService reset = new PasswordResetService(user,udao);
-        AddEmployee add = new AddEmployee(user,dao);
+        UserManagementService ums = new UserManagementService(user, udao);
+        PasswordResetService reset = new PasswordResetService(user, udao);
+        AddEmployee add = new AddEmployee(user, dao);
         UpdateEmployee update = new UpdateEmployee(user, dao);
         DeleteEmployee delete = new DeleteEmployee(user, dao);
         FetchEmployee fetch = new FetchEmployee(user, dao);
-        EmployeeService self = new EmployeeService(user, dao,udao);
+        EmployeeService self = new EmployeeService(user, dao, udao);
 
         while (true) {
 

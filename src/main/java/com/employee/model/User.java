@@ -12,17 +12,25 @@ public class User {
 
     private String username;
     private String password;
-
+    private String id; 
     
     @JsonAlias("role")
     private Set<Role> roles = new HashSet<>();
 
     public User() {}
 
-    public User(String username, String password, Set<Role> roles) {
+    public User(String username, String id,String password, Set<Role> roles) {
         this.username = username;
+        this.id=id;
         this.password = password;
         this.roles = roles;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() { return username; }
