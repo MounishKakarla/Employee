@@ -4,6 +4,7 @@ package com.employee.service;
 import com.employee.execute.EmployeeExecute;
 import com.employee.model.Employee;
 import com.employee.security.Permission;
+import com.employee.util.EmailValidator;
 import com.employee.model.User;
 import com.employee.dao.EmployeeDao;
 import com.employee.exception.DataAccessException;
@@ -31,6 +32,11 @@ public class UpdateEmployee extends BaseService implements EmployeeExecute {
                 String name = sc.next();
                 System.out.print("Email: ");
                 String email = sc.next();
+
+                if (!EmailValidator.isValid(email)) {
+                    System.out.println("Invalid email format");
+                    return;
+                }
                 System.out.print("Address: ");
                 String address = sc.next();
                 System.out.print("Salary: ");
@@ -50,7 +56,7 @@ public class UpdateEmployee extends BaseService implements EmployeeExecute {
             }
 
         } catch (EmployeeNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Employee Not Found");
         } catch (DataAccessException e) {
             System.out.println("System error");
         }

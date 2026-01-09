@@ -1,4 +1,4 @@
-package com.employee.dao;
+package com.employee.dao.file;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.employee.dao.file.FileEmployeeDaoImpl;
-import com.employee.exception.DuplicateEmployeeException;
 import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.Employee;
 
@@ -31,7 +30,7 @@ public class UpdateEmployeeTest {
 	 }
 	 @Test
 	 void testUpdateEmployeeFailure()throws Exception{
-		 Employee emp=new Employee("Emp002","Mounish","mounish2005@gmail.com","Hyderabad", 50000);
+		 Employee emp=new Employee("Emp004","Mounish","mounish2005@gmail.com","Hyderabad", 50000);
 		 EmployeeNotFoundException Exception=assertThrows(EmployeeNotFoundException.class,
                  () -> dao.updateEmployee(emp));
 		  assertEquals(

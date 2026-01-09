@@ -87,10 +87,14 @@ public class FileEmployeeDaoImpl implements EmployeeDao{
 	        ArrayNode array = fetchEmployeeData();
 	        
 	        for (JsonNode n : array) {
+	        	  
 	            if (n.get("name").asText().equalsIgnoreCase(e.getName())) {
-	                throw new DuplicateEmployeeException(
-	                    "Employee with similar name exists, use another name. Thank You!!"
-	                );
+	                throw new DuplicateEmployeeException("Employee with similar name exists.");
+	            }
+	            
+	           
+	            if (e.getId() != null && n.get("id").asText().equalsIgnoreCase(e.getId())) {
+	                throw new DuplicateEmployeeException("Employee with this ID already exists.");
 	            }
 	        }
 	        String id = generateNextEmployeeId(array);

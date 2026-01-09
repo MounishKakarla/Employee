@@ -1,0 +1,11 @@
+[ {
+  "username" : "mounish",
+  "password" : "02d08b08a65a280bc24f331a421599b54e972d1a4df67a08eee0f6a1b534d810",
+  "id" : "EMP001",
+  "roles" : [ "ADMIN", "MANAGER" ]
+}, {
+  "username" : "admin",
+  "password" : "694e44696511e20aeecb62b294c5c615ee5f0de36793939061685fc259a7554c",
+  "id" : "Emp002",
+  "roles" : [ "MANAGER" ]
+} ]

@@ -7,5 +7,5 @@
   "username" : "Mounish",
   "password" : "22c9e924cfbde9652e8c1fd8346c45ec230aea7b7351e9bb06809439f60aec8a",
   "id" : "EMP001",
-  "roles" : [ "EMPLOYEE", "MANAGER" ]
+  "roles" : [ "MANAGER", "EMPLOYEE" ]
 } ]

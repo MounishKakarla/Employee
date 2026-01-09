@@ -34,7 +34,7 @@ public class DeleteEmployee extends BaseService implements EmployeeExecute {
 
            
         } catch (EmployeeNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Employee Not Found");
         } catch (DataAccessException e) {
             System.out.println("System error");
         }

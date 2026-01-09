@@ -6,6 +6,7 @@ import java.util.Set;
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateUserException;
+import com.employee.exception.UserNotFoundException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.Role;
@@ -45,7 +46,7 @@ public class UserManagementService extends BaseService {
 		}
 	}
 
-	public void assignRole() {
+	public void assignRole() throws UserNotFoundException {
 
 		if (!hasAccess(Permission.ASSIGN_ROLE))
 			return;

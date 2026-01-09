@@ -1,11 +1,6 @@
 package com.employee.model;
 
-import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonSetter;
-
-//
-
+import com.employee.util.EmailValidator;
 
 public class Employee implements Comparable<Employee> {
 
@@ -14,11 +9,7 @@ public class Employee implements Comparable<Employee> {
     private double salary;
     private String email;
     private String address;
-    private static final String EMAIL_REGEX =
-            "^[A-Za-z0-9+_.-]+@((gmail|hotmail|yahoo)\\.com|company\\.com)$";
-
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
+  
 
     public Employee(String name,double salary) {
         
@@ -27,6 +18,9 @@ public class Employee implements Comparable<Employee> {
         this.salary = salary;
     }
     public Employee(String id,String name,String email,String address,double salary){
+    	if (!EmailValidator.isValid(email)) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
     	this.id=id;
     	this.name=name;
     	this.email=email;
@@ -39,6 +33,9 @@ public class Employee implements Comparable<Employee> {
     	this.salary=salary;
     }
     public Employee(String name,String email,String address,double salary) {
+    	if (!EmailValidator.isValid(email)) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
     	
     	this.name=name;
     	this.email=email;
@@ -76,19 +73,9 @@ public class Employee implements Comparable<Employee> {
         this.salary = salary;
     }
  
-    @JsonSetter("email")
-    private void jsonSetEmail(String email) {
-        // Jackson uses this method ONLY during JSON read
-        this.email = email;
-    }
-
+    
     public void setEmail(String email) {
-        // Application-level validation (user input)
-        if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
-            throw new IllegalArgumentException(
-                "Invalid email. Allowed domains: gmail.com, hotmail.com, yahoo.com, company.com"
-            );
-        }
+        
         this.email = email;
     }
 
@@ -101,8 +88,8 @@ public class Employee implements Comparable<Employee> {
     }
     
    @Override
-    public int compareTo(Employee e) {
-        return this.id.compareToIgnoreCase(e.id);
+    public int compareTo(Employee emp) {
+        return this.id.compareToIgnoreCase(emp.id);
     }
 
    @Override

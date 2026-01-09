@@ -5,6 +5,7 @@ import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateUserException;
 import com.employee.exception.EmployeeNotFoundException;
+import com.employee.exception.UserNotFoundException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.RolePermission;
@@ -17,13 +18,12 @@ import com.employee.service.PasswordResetService;
 import com.employee.service.UpdateEmployee;
 import com.employee.service.UserManagementService;
 
-
 public class MenuRouter {
 
     public static void start(User user,
                              EmployeeDao dao,
                              UserDao udao)
-            throws EmployeeNotFoundException, DataAccessException, DuplicateUserException {
+            throws EmployeeNotFoundException, DataAccessException, DuplicateUserException, UserNotFoundException {
 
         UserManagementService ums = new UserManagementService(user, udao);
         PasswordResetService reset = new PasswordResetService(user, udao);

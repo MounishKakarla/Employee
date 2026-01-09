@@ -4,6 +4,7 @@ package com.employee.service;
 import com.employee.execute.EmployeeExecute;
 import com.employee.model.Employee;
 import com.employee.security.Permission;
+import com.employee.util.EmailValidator;
 import com.employee.model.User;
 import com.employee.dao.EmployeeDao;
 import com.employee.exception.DataAccessException;
@@ -22,8 +23,14 @@ public class AddEmployee extends BaseService implements EmployeeExecute {
            
             System.out.print("Name: ");
             String name = sc.next();
-            System.out.println("Email:");
-            String email=sc.next();
+            System.out.print("Email: ");
+            String email = sc.next();
+
+            if (!EmailValidator.isValid(email)) {
+                System.out.println("Invalid email format");
+                return;
+            }
+
             System.out.println("Address:");
             String address=sc.next();
             System.out.print("Salary: ");
@@ -39,7 +46,7 @@ public class AddEmployee extends BaseService implements EmployeeExecute {
 
 
         } catch (DuplicateEmployeeException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Employee With that ID Already Exists");
         } catch (DataAccessException e) {
             System.out.println("System error");
            

@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateUserException;
+import com.employee.exception.UserNotFoundException;
 import com.employee.model.User;
 import com.employee.security.Role;
 import com.employee.util.PasswordUtil;
@@ -16,8 +17,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FileUserDaoImpl implements UserDao {
-	private static final File FILE = new File("users.json");
+	private final File FILE;
 	private final ObjectMapper mapper = new ObjectMapper();
+	public FileUserDaoImpl() {
+		this.FILE=new File("users.json");
+	}
+	public FileUserDaoImpl(String filePath) {
+		this.FILE=new File(filePath);
+	}
 
 	private List<User> fetchUsers() throws Exception {
 		if (!FILE.exists() || FILE.length() == 0) {
@@ -60,7 +67,7 @@ public class FileUserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public void assignRole(String username, Set<Role> roles) throws DataAccessException {
+	public void assignRole(String username, Set<Role> roles) throws DataAccessException,UserNotFoundException {
 
 		try {
 			List<User> users = fetchUsers();
@@ -72,7 +79,7 @@ public class FileUserDaoImpl implements UserDao {
 					return;
 				}
 			}
-			throw new RuntimeException("User not found");
+			throw new UserNotFoundException("User not found");
 
 		} catch (Exception e) {
 			throw new DataAccessException("Assign role failed", e);
@@ -103,7 +110,7 @@ public class FileUserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public void changePassword(String username, String newPassword) throws DataAccessException {
+	public void changePassword(String username, String newPassword) throws DataAccessException,UserNotFoundException {
 
 		try {
 			List<User> users = fetchUsers();
@@ -115,7 +122,7 @@ public class FileUserDaoImpl implements UserDao {
 					return;
 				}
 			}
-			throw new RuntimeException("User not found");
+			throw new UserNotFoundException("User not found");
 
 		} catch (Exception e) {
 			throw new DataAccessException("Change password failed", e);

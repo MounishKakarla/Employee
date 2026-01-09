@@ -40,8 +40,8 @@ public class FetchEmployee implements EmployeeExecute {
             employees.forEach(System.out::println);
 
         } catch (DataAccessException e) {
-            System.out.println("❌ Fetch All Failed: " + e.getMessage());
-            e.printStackTrace(); 
+            System.out.println("❌ Fetch All Failed" );
+
         }
     }
 
@@ -66,8 +66,8 @@ public class FetchEmployee implements EmployeeExecute {
             result.forEach(System.out::println);
 
         } catch (DataAccessException e) {
-            System.out.println("❌ Fetch By Name Failed: " + e.getMessage());
-            e.printStackTrace(); 
+            System.out.println(" Fetch By Name Failed ");
+           
         }
     }
 
@@ -96,8 +96,8 @@ public class FetchEmployee implements EmployeeExecute {
             System.out.println("Invalid Input! Salary must be numeric");
             BaseService.sc.nextLine();
         } catch (DataAccessException e) {
-            System.out.println(" Fetch By Salary Failed: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println(" Fetch By Salary Failed");
+            
         }
     }
 }

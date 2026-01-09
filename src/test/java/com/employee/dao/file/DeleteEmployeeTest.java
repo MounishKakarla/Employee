@@ -1,11 +1,8 @@
-package com.employee.dao;
+package com.employee.dao.file;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.File;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +29,7 @@ public class DeleteEmployeeTest {
 	
 	  @Test void deleteEmployeeFailure()throws Exception{ EmployeeNotFoundException
 	  Exception=assertThrows(EmployeeNotFoundException.class, () ->
-	  dao.delete("Emp002")); assertEquals( "Employee did not Exists.Thank You!!",
+	  dao.delete("Emp004")); assertEquals( "Employee did not Exists.Thank You!!",
 	  Exception.getMessage() );
 	  
 	  }
