@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.employee.dao.EmployeeDao;
 import com.employee.exception.DataAccessException;
+import com.employee.exception.EmployeeNotFoundException;
 import com.employee.execute.EmployeeExecute;
 import com.employee.model.Employee;
 import com.employee.model.User;
@@ -45,7 +46,7 @@ public class FetchEmployee implements EmployeeExecute {
         }
     }
 
-        public void fetchByName() {
+        public void fetchByName() throws EmployeeNotFoundException {
 
         if (!RolePermission.hasPermission(user.getRoles(), Permission.FETCH_EMPLOYEEBYNAME)) {
             System.out.println("Access Denied! Only Admin and HR can Fetch By Name");

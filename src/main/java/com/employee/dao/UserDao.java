@@ -14,7 +14,7 @@ public interface UserDao {
 
     void assignRole(String username, Set<Role> roles) throws DataAccessException,UserNotFoundException;
 
-    void resetPassword(String username) throws DataAccessException;
+    void resetPassword(String username) throws DataAccessException, UserNotFoundException;
 
     void changePassword(String username, String newPassword) throws DataAccessException,UserNotFoundException;
     User authenticate(String username, String password)

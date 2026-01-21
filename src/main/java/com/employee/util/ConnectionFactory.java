@@ -18,9 +18,13 @@ public class ConnectionFactory {
                         DbConfigLoader.getPassword()
                 );
             }
+           
             return connection;
+            
         } catch (Exception e) {
             throw new RuntimeException("DB connection failed", e);
         }
+        
+        
     }
 }

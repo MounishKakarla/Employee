@@ -17,65 +17,62 @@ import com.employee.storage.StorageType;
 import com.employee.util.ConnectionFactory;
 
 public class JdbcEmployeeDaoImpl implements EmployeeDao {
-    private final StorageType dbType;
+	private final StorageType dbType;
 
-    public JdbcEmployeeDaoImpl(StorageType dbType) {
-        this.dbType = dbType;
-    }
+	public JdbcEmployeeDaoImpl(StorageType dbType) {
+		this.dbType = dbType;
+	}
 
-    @Override
-    public void add(Employee emp)
-            throws DuplicateEmployeeException, DataAccessException {
+	@Override
+	public void add(Employee emp) throws DuplicateEmployeeException, DataAccessException {
 
-        try (Connection con = ConnectionFactory.getConnection()) {
+		try (Connection con = ConnectionFactory.getConnection()) {
 
-            if (dbType == StorageType.POSTGRES) {
+			if (dbType == StorageType.POSTGRES || dbType == StorageType.SUPABASE) {
 
-                String sql = """
-                    INSERT INTO employees (name, email, address, salary)
-                    VALUES (?, ?, ?, ?)
-                    RETURNING id
-                    """;
+				String sql = """
+						INSERT INTO employees (name, email, address, salary)
+						VALUES (?, ?, ?, ?)
+						RETURNING id
+						""";
 
-                try (PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setString(1, emp.getName());
-                    ps.setString(2, emp.getEmail());
-                    ps.setString(3, emp.getAddress());
-                    ps.setDouble(4, emp.getSalary());
+				try (PreparedStatement ps = con.prepareStatement(sql)) {
+					ps.setString(1, emp.getName());
+					ps.setString(2, emp.getEmail());
+					ps.setString(3, emp.getAddress());
+					ps.setDouble(4, emp.getSalary());
 
-                    ResultSet rs = ps.executeQuery(); 
-                    if (rs.next()) {
-                        emp.setId(rs.getString("id"));
-                    }
-                }
+					ResultSet rs = ps.executeQuery();
+					if (rs.next()) {
+						emp.setId(rs.getString("id"));
+					}
+				}
 
-            } else if (dbType == StorageType.MYSQL) {
+			} else if (dbType == StorageType.MYSQL) {
 
-                String sql =
-                    "INSERT INTO employees (name, email, address, salary) VALUES (?, ?, ?, ?)";
+				String sql = "INSERT INTO employees (name, email, address, salary) VALUES (?, ?, ?, ?)";
 
-                try (PreparedStatement ps =
-                         con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+				try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-                    ps.setString(1, emp.getName());
-                    ps.setString(2, emp.getEmail());
-                    ps.setString(3, emp.getAddress());
-                    ps.setDouble(4, emp.getSalary());
+					ps.setString(1, emp.getName());
+					ps.setString(2, emp.getEmail());
+					ps.setString(3, emp.getAddress());
+					ps.setDouble(4, emp.getSalary());
 
-                    ps.executeUpdate(); 
+					ps.executeUpdate();
 
-                    ResultSet rs = ps.getGeneratedKeys();
-                    if (rs.next()) {
-                        emp.setId(rs.getString(1));
-                    }
-                }
-            }
+					ResultSet rs = ps.getGeneratedKeys();
+					if (rs.next()) {
+						emp.setId(rs.getString(1));
+					}
+				}
+			}
 
-        } catch (SQLException ex) {
-            throw new DataAccessException("Employee insert failed", ex);
-        }
-    }
+		} catch (SQLException ex) {
 
+			throw new DataAccessException("Employee insert failed", ex);
+		}
+	}
 
 	@Override
 	public void updateEmployee(Employee emp) throws EmployeeNotFoundException, DataAccessException {
@@ -109,7 +106,7 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 
 		} catch (SQLException se) {
 			throw new EmployeeNotFoundException("No Employee With that id");
-			
+
 		}
 	}
 
@@ -144,7 +141,7 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public Employee findById(String id) throws DataAccessException {
+	public Employee findById(String id) throws EmployeeNotFoundException,DataAccessException {
 		String sql = "Select * from employees Where id=?";
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 			ps.setString(1, id);
@@ -153,13 +150,13 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				return map(rs);
 			}
 		} catch (SQLException se) {
-			throw new DataAccessException("No Employee Found with that id", se);
-			}
+			throw new EmployeeNotFoundException("No Employee Found with that id");
+		}
 		return null;
 	}
 
 	@Override
-	public Set<Employee> findByName(String name) throws DataAccessException {
+	public Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException {
 		Set<Employee> set = new HashSet<>();
 		String sql = "Select * from employees Where name=?";
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -169,7 +166,7 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				set.add(map(rs));
 			}
 		} catch (SQLException se) {
-			throw new DataAccessException("No Employee Found with that Name ", se);
+			throw new EmployeeNotFoundException("No Employee Found with that Name ");
 		}
 		return set;
 

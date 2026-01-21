@@ -8,40 +8,33 @@ import com.employee.storage.StorageType;
 public class DbConfigLoader {
 
     private static final Properties props = new Properties();
-    private static boolean initialized = false;
 
     private DbConfigLoader() {}
 
-   
     public static void init(StorageType type) {
-        if (initialized) return;
 
-        try {
-            String fileName;
+        String fileName = switch (type) {
+            case POSTGRES -> "db-postgres.properties";
+            case MYSQL -> "db-mysql.properties";
+            case SUPABASE -> "db-supabase.properties";
+            default -> throw new IllegalArgumentException("Not a DB storage");
+        };
 
-            if (type == StorageType.POSTGRES) {
-                fileName = "db-postgres.properties";
-            } else if (type == StorageType.MYSQL) {
-                fileName = "db-mysql.properties";
-            } else {
-                throw new RuntimeException("Invalid DB type");
-            }
-
-            InputStream is = DbConfigLoader.class
-                    .getClassLoader()
-                    .getResourceAsStream(fileName);
+        try (InputStream is =
+                 DbConfigLoader.class
+                     .getClassLoader()
+                     .getResourceAsStream(fileName)) {
 
             if (is == null) {
                 throw new RuntimeException(fileName + " not found");
             }
 
+            props.clear();
             props.load(is);
             Class.forName(props.getProperty("db.driver"));
 
-            initialized = true;
-
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load DB config", e);
+            throw new RuntimeException("DB config load failed", e);
         }
     }
 

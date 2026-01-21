@@ -23,8 +23,8 @@ public interface EmployeeDao {
             throws EmployeeNotFoundException, DataAccessException;
 
     Set<Employee> findAll() throws DataAccessException;
-    Employee findById(String id) throws DataAccessException;
-    Set<Employee> findByName(String name) throws DataAccessException;
+    Employee findById(String id) throws EmployeeNotFoundException,DataAccessException;
+    Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException;
     Set<Employee> findBySalary(double salary) throws DataAccessException;
 }
 

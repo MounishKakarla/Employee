@@ -9,7 +9,7 @@ public class UserDaoFactory {
 	public static UserDao getUserDao(StorageType type) {
 		return switch (type) {
 		case FILE-> new FileUserDaoImpl();
-		case POSTGRES,MYSQL ->new JdbcUserDaoImpl();
+		case POSTGRES,MYSQL ,SUPABASE->new JdbcUserDaoImpl();
 		
 
 		};

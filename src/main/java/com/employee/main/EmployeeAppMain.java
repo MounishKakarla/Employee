@@ -15,16 +15,14 @@ public class EmployeeAppMain {
     public static void main(String[] args) throws Exception {
 
         
-        StorageType storageType = StorageSelector.chooseStorage();
+    	StorageType storage = StorageSelector.chooseStorage();
 
-      
-        if (storageType != StorageType.FILE) {
-            DbConfigLoader.init(storageType);
-        }
+    	if (storage != StorageType.FILE) {
+    	    DbConfigLoader.init(storage);
+    	}
 
-       
-        UserDao userDao = UserDaoFactory.getUserDao(storageType);
-        EmployeeDao employeeDao = EmployeeDaoFactory.getEmployeeDao(storageType);
+    	EmployeeDao employeeDao = EmployeeDaoFactory.getEmployeeDao(storage);
+    	UserDao userDao = UserDaoFactory.getUserDao(storage);
 
         
         User user = Login.login(userDao);

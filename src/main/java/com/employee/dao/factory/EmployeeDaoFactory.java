@@ -9,7 +9,7 @@ public class EmployeeDaoFactory {
 	public static EmployeeDao getEmployeeDao(StorageType type) {
 		return switch (type) {
 		case FILE-> new FileEmployeeDaoImpl();
-		case POSTGRES,MYSQL ->new JdbcEmployeeDaoImpl(type);
+		case POSTGRES,MYSQL,SUPABASE ->new JdbcEmployeeDaoImpl(type);
 		
 
 		};

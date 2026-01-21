@@ -11,6 +11,7 @@ public class StorageSelector {
 				1.File(Json)
 				2.Postgres
 				3.MySql
+				4.SupaBase
 				""");
 		int choice = sc.nextInt();
 
@@ -18,6 +19,7 @@ public class StorageSelector {
 		case 1 -> StorageType.FILE;
 		case 2 -> StorageType.POSTGRES;
 		case 3 -> StorageType.MYSQL;
+		case 4->StorageType.SUPABASE;
 		default -> throw new IllegalArgumentException("Invalid choice");
 		};
 

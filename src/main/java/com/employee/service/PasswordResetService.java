@@ -2,6 +2,7 @@ package com.employee.service;
 
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
+import com.employee.exception.UserNotFoundException;
 import com.employee.model.User;
 import com.employee.security.Permission;
 
@@ -14,7 +15,7 @@ public class PasswordResetService extends BaseService {
 		this.userDao = userDao;
 	}
 
-	public void resetPassword() {
+	public void resetPassword() throws UserNotFoundException {
 
 		if (!hasAccess(Permission.RESET_PASSWORD))
 			return;
