@@ -1,4 +1,4 @@
-package com.user.dao.file.Mock;
+package com.user.dao.file.test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +20,7 @@ import com.employee.security.Role;
 
 import org.junit.jupiter.api.AfterEach;
 
-public class FileUserDaoImplTest {
+public class FileUserDaoImplJUnitTest {
 	private FileUserDaoImpl dao;
 	private File testFile;
 

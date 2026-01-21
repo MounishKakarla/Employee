@@ -1,4 +1,4 @@
-package com.user.dao.file.Mock;
+package com.user.dao.file.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

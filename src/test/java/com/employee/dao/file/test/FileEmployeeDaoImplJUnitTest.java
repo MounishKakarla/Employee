@@ -1,4 +1,4 @@
-package com.employee.dao.file.JUnits;
+package com.employee.dao.file.test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +22,7 @@ import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.Employee;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FileEmployeeDaoImplTest {
+public class FileEmployeeDaoImplJUnitTest {
 
 	private static FileEmployeeDaoImpl dao;
 	private static final String TEST_FILE = "employees-test.json";
@@ -36,7 +36,7 @@ public class FileEmployeeDaoImplTest {
 	}
 
 	@AfterAll
-	static void tearDown() {
+	static void cleanUp() {
 		File file = new File(TEST_FILE);
 		if (file.exists())
 			file.delete();
