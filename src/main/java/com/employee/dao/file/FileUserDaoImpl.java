@@ -43,18 +43,18 @@ public class FileUserDaoImpl implements UserDao {
 	public void createUser(String username, String id, Set<Role> roles) throws DataAccessException, DuplicateUserException {
 	    try {
 	        List<User> users = fetchUsers();
-	        for (User u : users) {
-	            if (u.getUsername().equalsIgnoreCase(username)) {
+	        for (User user : users) {
+	            if (user.getUsername().equalsIgnoreCase(username)) {
 	                throw new DuplicateUserException("User '" + username + "' already exists");
 	            }
 	        }
 	        String tempPassword = "Temp@" + System.currentTimeMillis();
 	        users.add(new User(username, id, PasswordUtil.encrypt(tempPassword), roles));
 	        persistUsers(users);
-	    } catch (DuplicateUserException e) {
-	        throw e; 
-	    } catch (Exception e) {
-	        throw new DataAccessException("Create user failed", e);
+	    } catch (DuplicateUserException exception) {
+	        throw exception; 
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Create user failed", exception);
 	    }
 	}
 
@@ -62,18 +62,18 @@ public class FileUserDaoImpl implements UserDao {
 	public void assignRole(String username, Set<Role> roles) throws DataAccessException, UserNotFoundException {
 	    try {
 	        List<User> users = fetchUsers();
-	        for (User u : users) {
-	            if (u.getUsername().equalsIgnoreCase(username)) {
-	                u.setRoles(roles);
+	        for (User user: users) {
+	            if (user.getUsername().equalsIgnoreCase(username)) {
+	                user.setRoles(roles);
 	                persistUsers(users);
 	                return;
 	            }
 	        }
 	        throw new UserNotFoundException("User not found");
-	    } catch (UserNotFoundException e) {
-	        throw e; // Pass through to test
-	    } catch (Exception e) {
-	        throw new DataAccessException("Assign role failed", e);
+	    } catch (UserNotFoundException exception) {
+	        throw exception; // Pass through to test
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Assign role failed", exception);
 	    }
 	}
 
@@ -82,18 +82,18 @@ public class FileUserDaoImpl implements UserDao {
 	public void changePassword(String username, String newPassword) throws DataAccessException, UserNotFoundException {
 	    try {
 	        List<User> users = fetchUsers();
-	        for (User u : users) {
-	            if (u.getUsername().equalsIgnoreCase(username)) {
-	                u.setPassword(PasswordUtil.encrypt(newPassword));
+	        for (User user : users) {
+	            if (user.getUsername().equalsIgnoreCase(username)) {
+	                user.setPassword(PasswordUtil.encrypt(newPassword));
 	                persistUsers(users);
 	                return;
 	            }
 	        }
 	        throw new UserNotFoundException("User not found");
-	    } catch (UserNotFoundException e) {
-	        throw e; 
-	    } catch (Exception e) {
-	        throw new DataAccessException("Change password failed", e);
+	    } catch (UserNotFoundException exception) {
+	        throw exception; 
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Change password failed",exception);
 	    }
 	}
 
@@ -102,19 +102,19 @@ public class FileUserDaoImpl implements UserDao {
 	public void resetPassword(String username) throws DataAccessException, UserNotFoundException {
 	    try {
 	        List<User> users = fetchUsers();
-	        for (User u : users) {
-	            if (u.getUsername().equalsIgnoreCase(username)) {
+	        for (User user : users) {
+	            if (user.getUsername().equalsIgnoreCase(username)) {
 	                String temp = "Reset@" + UUID.randomUUID().toString().substring(0, 5);
-	                u.setPassword(PasswordUtil.encrypt(temp));
+	                user.setPassword(PasswordUtil.encrypt(temp));
 	                persistUsers(users);
 	                return;
 	            }
 	        }
 	        throw new UserNotFoundException("User not found");
-	    } catch (UserNotFoundException e) {
-	        throw e;
-	    } catch (Exception e) {
-	        throw new DataAccessException("Reset password failed", e);
+	    } catch (UserNotFoundException exception) {
+	        throw exception;
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Reset password failed", exception);
 	    }
 	}
 
@@ -135,8 +135,8 @@ public class FileUserDaoImpl implements UserDao {
 
 	        return null;
 
-	    } catch (Exception e) {
-	        throw new DataAccessException("Login failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Login failed", exception);
 	    }
 	}
 

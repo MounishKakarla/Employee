@@ -21,8 +21,8 @@ public class ConnectionFactory {
            
             return connection;
             
-        } catch (Exception e) {
-            throw new RuntimeException("DB connection failed", e);
+        } catch (Exception exception) {
+            throw new RuntimeException("DB connection failed", exception);
         }
         
         

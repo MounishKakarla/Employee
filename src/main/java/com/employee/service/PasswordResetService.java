@@ -26,7 +26,7 @@ public class PasswordResetService extends BaseService {
 
 			userDao.resetPassword(username);
 
-		} catch (DataAccessException e) {
+		} catch (DataAccessException exception) {
 			System.out.println("Password reset failed");
 		}
 	}

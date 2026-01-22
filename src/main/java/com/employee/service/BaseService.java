@@ -19,8 +19,8 @@ public abstract class BaseService {
     }
   
 
-    protected boolean hasAccess(Permission p) {
-        if (!RolePermission.hasPermission(user.getRoles(), p)) {
+    protected boolean hasAccess(Permission permission) {
+        if (!RolePermission.hasPermission(user.getRoles(), permission)) {
             System.out.println("Access Denied");
             return false;
         }

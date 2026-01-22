@@ -45,9 +45,9 @@ public class AddEmployee extends BaseService implements EmployeeExecute {
             System.out.println("Employee Created with ID: " + emp.getId());
 
 
-        } catch (DuplicateEmployeeException e) {
+        } catch (DuplicateEmployeeException exception) {
             System.out.println("Employee With that ID Already Exists");
-        } catch (DataAccessException e) {
+        } catch (DataAccessException exception) {
             System.out.println("System error");
            
         }

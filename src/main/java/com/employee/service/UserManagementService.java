@@ -34,8 +34,8 @@ public class UserManagementService extends BaseService {
 			String input = sc.next();
 
 			Set<Role> roles = new HashSet<>();
-			for (String r : input.split(",")) {
-				roles.add(Role.valueOf(r.trim().toUpperCase()));
+			for (String role : input.split(",")) {
+				roles.add(Role.valueOf(role.trim().toUpperCase()));
 			}
 
 			userDao.createUser(username, id, roles);
@@ -59,14 +59,14 @@ public class UserManagementService extends BaseService {
 			String input = sc.next();
 
 			Set<Role> roles = new HashSet<>();
-			for (String r : input.split(",")) {
-				roles.add(Role.valueOf(r.trim().toUpperCase()));
+			for (String role : input.split(",")) {
+				roles.add(Role.valueOf(role.trim().toUpperCase()));
 			}
 
 			userDao.assignRole(username, roles);
 			System.out.println("Roles updated successfully");
 
-		} catch (DataAccessException e) {
+		} catch (DataAccessException exception) {
 			System.out.println("Role assignment failed");
 		}
 	}

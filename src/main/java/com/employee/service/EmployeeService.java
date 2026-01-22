@@ -43,9 +43,9 @@ public class EmployeeService extends BaseService {
 			dao.updateEmployee(emp);
 			System.out.println("Profile updated successfully");
 
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			System.out.println("Profile update failed");
-			e.printStackTrace();
+			
 		}
 	}
 
@@ -78,7 +78,7 @@ public class EmployeeService extends BaseService {
 			System.out.println("Password updated. Please login again.");
 			System.exit(0);
 
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			System.out.println("Password change failed");
 		}
 	}

@@ -33,8 +33,8 @@ public class DbConfigLoader {
             props.load(is);
             Class.forName(props.getProperty("db.driver"));
 
-        } catch (Exception e) {
-            throw new RuntimeException("DB config load failed", e);
+        } catch (Exception exception) {
+            throw new RuntimeException("DB config load failed", exception);
         }
     }
 

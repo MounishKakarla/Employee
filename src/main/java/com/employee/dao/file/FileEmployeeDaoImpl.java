@@ -43,8 +43,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 
 			return (ArrayNode) node;
 
-		} catch (Exception e) {
-			throw new DataAccessException("Failed to read employees.json", e);
+		} catch (Exception exception) {
+			throw new DataAccessException("Failed to read employees.json", exception);
 		}
 	}
 
@@ -69,37 +69,37 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 			// Saves updated data to employees.json,Uses pretty printing for readability
 			// serialization :Converting Java objects into Json files
 			mapper.writerWithDefaultPrettyPrinter().writeValue(FILE, employees);
-		} catch (Exception e) {
-			throw new DataAccessException("Write failed", e);
+		} catch (Exception exception) {
+			throw new DataAccessException("Write failed", exception);
 		}
 	}
 
 	@Override
-	public void add(Employee e) throws DuplicateEmployeeException, DataAccessException {
+	public void add(Employee employee) throws DuplicateEmployeeException, DataAccessException {
 
 		ArrayNode array = fetchEmployeeData();
 
-		for (JsonNode n : array) {
+		for (JsonNode node : array) {
 
-			if (n.get("name").asText().equalsIgnoreCase(e.getName())) {
+			if (node.get("name").asText().equalsIgnoreCase(employee.getName())) {
 				throw new DuplicateEmployeeException("Employee with similar name exists.");
 			}
 
-			if (e.getId() != null && n.get("id").asText().equalsIgnoreCase(e.getId())) {
+			if (employee.getId() != null && node.get("id").asText().equalsIgnoreCase(employee.getId())) {
 				throw new DuplicateEmployeeException("Employee with this ID already exists.");
 			}
 		}
 		String id = generateNextEmployeeId(array);
-		e.setId(id);
+		employee.setId(id);
 
 		String newId = generateNextEmployeeId(array);
 
 		ObjectNode obj = mapper.createObjectNode();
 		obj.put("id", newId);
-		obj.put("name", e.getName());
-		obj.put("email", e.getEmail());
-		obj.put("address", e.getAddress());
-		obj.put("salary", e.getSalary());
+		obj.put("name", employee.getName());
+		obj.put("email", employee.getEmail());
+		obj.put("address", employee.getAddress());
+		obj.put("salary", employee.getSalary());
 
 		array.add(obj);
 		persistEmployees(array);
@@ -107,18 +107,18 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public void updateEmployee(Employee e) throws EmployeeNotFoundException, DataAccessException {
+	public void updateEmployee(Employee employee) throws EmployeeNotFoundException, DataAccessException {
 
 		ArrayNode array = fetchEmployeeData();
-		for (JsonNode n : array) {
-			if (n.get("id").asText().equalsIgnoreCase(e.getId())) {
+		for (JsonNode node : array) {
+			if (node.get("id").asText().equalsIgnoreCase(employee.getId())) {
 
-				ObjectNode o = (ObjectNode) n;
+				ObjectNode obj = (ObjectNode) node;
 
-				o.put("name", e.getName());
-				o.put("email", e.getEmail());
-				o.put("address", e.getAddress());
-				o.put("salary", e.getSalary());
+				obj.put("name", employee.getName());
+				obj.put("email", employee.getEmail());
+				obj.put("address", employee.getAddress());
+				obj.put("salary", employee.getSalary());
 				persistEmployees(array);
 				return;
 			}
@@ -130,11 +130,11 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	public void updateNameById(String id, String name) throws EmployeeNotFoundException, DataAccessException {
 
 		ArrayNode array = fetchEmployeeData();
-		for (JsonNode n : array) {
-			if (n.get("id").asText().equalsIgnoreCase(id)) {
+		for (JsonNode node : array) {
+			if (node.get("id").asText().equalsIgnoreCase(id)) {
 
 				// partial update
-				((ObjectNode) n).put("name", name);
+				((ObjectNode) node).put("name", name);
 				persistEmployees(array);
 				return;
 			}
@@ -161,21 +161,21 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	public Set<Employee> findAll() throws DataAccessException {
 		Set<Employee> set = new TreeSet<>();
 		try {
-			for (JsonNode n : fetchEmployeeData())
+			for (JsonNode node : fetchEmployeeData())
 				// De-serialization :convert Json back to Java Objects
-				set.add(mapper.treeToValue(n, Employee.class));
+				set.add(mapper.treeToValue(node, Employee.class));
 			return set;
-		} catch (Exception e) {
-			throw new DataAccessException("Fetch all failed", e);
+		} catch (Exception exception) {
+			throw new DataAccessException("Fetch all failed", exception);
 		}
 	}
 
 	@Override
 	public Employee findById(String id) throws DataAccessException, EmployeeNotFoundException {
 		try {
-			for (JsonNode n : fetchEmployeeData()) {
-				if (n.get("id").asText().equalsIgnoreCase(id)) {
-					return mapper.treeToValue(n, Employee.class);
+			for (JsonNode node : fetchEmployeeData()) {
+				if (node.get("id").asText().equalsIgnoreCase(id)) {
+					return mapper.treeToValue(node, Employee.class);
 				}
 			}
 
@@ -194,9 +194,9 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	public Set<Employee> findByName(String name) throws DataAccessException, EmployeeNotFoundException {
 		Set<Employee> employeesFound = new TreeSet<>();
 		try {
-			for (JsonNode n : fetchEmployeeData()) {
-				if (n.get("name").asText().equalsIgnoreCase(name)) {
-					employeesFound.add(mapper.treeToValue(n, Employee.class));
+			for (JsonNode node : fetchEmployeeData()) {
+				if (node.get("name").asText().equalsIgnoreCase(name)) {
+					employeesFound.add(mapper.treeToValue(node, Employee.class));
 				}
 			}
 
@@ -216,12 +216,12 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	public Set<Employee> findBySalary(double salary) throws DataAccessException {
 		Set<Employee> set = new TreeSet<>();
 		try {
-			for (JsonNode n : fetchEmployeeData())
-				if (n.get("salary").asDouble() == salary)
-					set.add(mapper.treeToValue(n, Employee.class));
+			for (JsonNode node : fetchEmployeeData())
+				if (node.get("salary").asDouble() == salary)
+					set.add(mapper.treeToValue(node, Employee.class));
 			return set;
-		} catch (Exception e) {
-			throw new DataAccessException("Fetch by salary failed", e);
+		} catch (Exception exception) {
+			throw new DataAccessException("Fetch by salary failed", exception);
 		}
 	}
 }

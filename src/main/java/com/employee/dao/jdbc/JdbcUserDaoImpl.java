@@ -40,21 +40,21 @@ public class JdbcUserDaoImpl implements UserDao {
 			ps.setString(3, employeeId);
 			ps.executeUpdate();
 
-			for (Role r : roles) {
+			for (Role role : roles) {
 				PreparedStatement pstmt = con.prepareStatement("INSERT INTO user_roles(username, role) VALUES (?, ?)");
 				pstmt.setString(1, username);
-				pstmt.setString(2, r.name());
+				pstmt.setString(2, role.name());
 				pstmt.executeUpdate();
 			}
 
 			System.out.println("User created successfully");
 			System.out.println("Temporary Password: " + tempPassword);
 
-		} catch (DuplicateUserException e) {
-			throw e;
-		} catch (SQLException e) {
+		} catch (DuplicateUserException exception) {
+			throw exception;
+		} catch (SQLException exception) {
 
-			throw new DataAccessException("Create user failed", e);
+			throw new DataAccessException("Create user failed", exception);
 		}
 	}
 
@@ -155,8 +155,8 @@ public class JdbcUserDaoImpl implements UserDao {
 			user.setRoles(roles);
 			return user;
 
-		} catch (Exception e) {
-			throw new DataAccessException("Login failed", e);
+		} catch (Exception exception) {
+			throw new DataAccessException("Login failed", exception);
 		}
 	}
 

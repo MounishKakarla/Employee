@@ -29,10 +29,10 @@ public class Login {
 
 				System.out.println("Invalid credentials. Try again.\n");
 
-			} catch (DataAccessException e) {
-				e.printStackTrace();
+			} catch (DataAccessException exception) {
+
 				System.out.println("Login system error");
-				
+
 			}
 		}
 	}
