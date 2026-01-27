@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -22,6 +24,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.employee.dao.file.FileEmployeeDaoImpl;
+import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateEmployeeException;
 import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.Employee;
@@ -72,22 +75,27 @@ public class FileEmployeeDaoImplMockTest {
 		assertEquals("Employee with similar name exists.",exception.getMessage());
 	}
 
+
 	@Test
 	@Order(3)
 	void testFindByIdSuccess() throws Exception {
-		Employee found = dao.findById("Emp001");
 
-		assertNotNull(found);
-		assertEquals("Tharun", found.getName());
+	    Employee found = dao.findById("Emp001")
+	            .orElseThrow(() -> new AssertionError("Employee not found"));
+
+	    assertEquals("Tharun", found.getName());
 	}
+
 
 	@Test
 	@Order(4)
-	void testFindByIdFailure() {
-		EmployeeNotFoundException exception = assertThrows(EmployeeNotFoundException.class, () -> dao.findById("InvalidID"));
+	void testFindByIdFailure() throws DataAccessException {
 
-		assertEquals("Fetch by id failed", exception.getMessage());
+	    Optional<Employee> result = dao.findById("InvalidID");
+
+	    assertTrue(result.isEmpty());
 	}
+
 
 	@Test
 	@Order(5)

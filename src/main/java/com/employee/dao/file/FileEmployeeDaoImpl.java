@@ -1,6 +1,7 @@
 package com.employee.dao.file;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -169,26 +170,21 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 			throw new DataAccessException("Fetch all failed", exception);
 		}
 	}
-
 	@Override
-	public Employee findById(String id) throws DataAccessException, EmployeeNotFoundException {
-		try {
-			for (JsonNode node : fetchEmployeeData()) {
-				if (node.get("id").asText().equalsIgnoreCase(id)) {
-					return mapper.treeToValue(node, Employee.class);
-				}
-			}
-
-			throw new EmployeeNotFoundException("Fetch by id failed");
-
-		} catch (EmployeeNotFoundException exception) {
-
-			throw exception;
-		} catch (Exception exception) {
-
-			throw new EmployeeNotFoundException("Fetch by id failed");
-		}
+	public Optional<Employee> findById(String id) throws DataAccessException {
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
+	            if (node.get("id").asText().equalsIgnoreCase(id)) {
+	                Employee emp = mapper.treeToValue(node, Employee.class);
+	                return Optional.of(emp);
+	            }
+	        }
+	        return Optional.empty(); 
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Fetch by id failed", exception);
+	    }
 	}
+
 
 	@Override
 	public Set<Employee> findByName(String name) throws DataAccessException, EmployeeNotFoundException {

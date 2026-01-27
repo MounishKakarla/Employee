@@ -75,6 +75,9 @@ public class Employee implements Comparable<Employee> {
  
     
     public void setEmail(String email) {
+    	if(!EmailValidator.isValid(email)) {
+    		throw new IllegalArgumentException("Invalid email format");
+    	}
         
         this.email = email;
     }
@@ -89,6 +92,10 @@ public class Employee implements Comparable<Employee> {
     
    @Override
     public int compareTo(Employee emp) {
+	   if(emp==null)return 1;
+	   if(this.id==null && emp.id==null)return 0;
+	   if(this.id ==null)return -1;
+	   if(emp.id==null)return 1;
         return this.id.compareToIgnoreCase(emp.id);
     }
 

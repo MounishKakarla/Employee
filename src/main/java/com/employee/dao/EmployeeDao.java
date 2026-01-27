@@ -1,5 +1,6 @@
 package com.employee.dao;
 
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -23,7 +24,7 @@ public interface EmployeeDao {
             throws EmployeeNotFoundException, DataAccessException;
 
     Set<Employee> findAll() throws DataAccessException;
-    Employee findById(String id) throws EmployeeNotFoundException,DataAccessException;
+   Optional< Employee> findById(String id) throws DataAccessException;
     Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException;
     Set<Employee> findBySalary(double salary) throws DataAccessException;
 }

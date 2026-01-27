@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.employee.dao.EmployeeDao;
@@ -141,19 +142,27 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public Employee findById(String id) throws EmployeeNotFoundException,DataAccessException {
-		String sql = "Select * from employees Where id=?";
-		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-			ps.setString(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				return map(rs);
-			}
-		} catch (SQLException se) {
-			throw new EmployeeNotFoundException("No Employee Found with that id");
-		}
-		return null;
+	public Optional<Employee> findById(String id) throws DataAccessException {
+
+	    String sql = "SELECT * FROM employees WHERE id=?";
+
+	    try (Connection con = ConnectionFactory.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setString(1, id);
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            return Optional.of(map(rs)); 
+	        }
+
+	        return Optional.empty(); 
+
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Fetch by id failed", e);
+	    }
 	}
+
 
 	@Override
 	public Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException {

@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import com.employee.dao.file.FileEmployeeDaoImpl;
+import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateEmployeeException;
 import com.employee.exception.EmployeeNotFoundException;
 import com.employee.model.Employee;
@@ -68,18 +71,22 @@ public class FileEmployeeDaoImplJUnitTest {
 	@Test
 	@Order(3)
 	void testFindByIdSuccess() throws Exception {
-		Employee found = dao.findById("Emp001");
-		assertNotNull(found);
-		assertEquals("Tharun", found.getName());
+
+	    Optional<Employee> found = dao.findById("Emp001");
+
+	    assertTrue(found.isPresent());  
+	    assertEquals("Tharun", found.get().getName());
 	}
 
 	@Test
 	@Order(4)
-	void testFindByIdFailure() {
-		EmployeeNotFoundException exception = assertThrows(EmployeeNotFoundException.class,
-				() -> dao.findById("InvalidID"));
-		assertEquals("Fetch by id failed", exception.getMessage());
+	void testFindByIdFailure() throws DataAccessException {
+
+	    Optional<Employee> result = dao.findById("InvalidID");
+
+	    assertTrue(result.isEmpty());
 	}
+
 
 	@Test
 	@Order(5)
