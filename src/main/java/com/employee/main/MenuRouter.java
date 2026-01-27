@@ -19,7 +19,7 @@ public class MenuRouter {
 	public static void start(User user, EmployeeDao dao, UserDao udao)
 			throws EmployeeNotFoundException, DataAccessException, DuplicateUserException, UserNotFoundException {
 
-		UserService ums = new UserService(user, udao);
+		UserService userService = new UserService(user, udao);
 
 		EmployeeService employeeService = new EmployeeService(user, dao, udao);
 
@@ -65,9 +65,9 @@ public class MenuRouter {
 			int ch = BaseService.sc.nextInt();
 
 			switch (ch) {
-			case 1 -> ums.createUser();
-			case 2 -> ums.assignRole();
-			case 3 -> ums.resetPassword();
+			case 1 -> userService.createUser();
+			case 2 -> userService.assignRole();
+			case 3 -> userService.resetPassword();
 			case 4 -> employeeService.addEmployee();
 			case 5 -> employeeService.updateEmployee();
 			case 6 -> employeeService.deleteEmployee();

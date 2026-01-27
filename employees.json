@@ -4,4 +4,16 @@
   "email" : "Mouni@gmail.com",
   "address" : "Hyderabad",
   "salary" : 60000.0
+}, {
+  "id" : "EMP002",
+  "name" : "Rohit",
+  "email" : "rohit@gmail.com",
+  "address" : "Hyderabad",
+  "salary" : 60000.0
+}, {
+  "id" : "EMP003",
+  "name" : "Shanmuk",
+  "email" : "shanmuk@gmail.com",
+  "address" : "Hyderabad",
+  "salary" : 60000.0
 } ]

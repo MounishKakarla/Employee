@@ -8,4 +8,14 @@
   "password" : "22c9e924cfbde9652e8c1fd8346c45ec230aea7b7351e9bb06809439f60aec8a",
   "id" : "EMP001",
   "roles" : [ "MANAGER", "EMPLOYEE" ]
+}, {
+  "username" : "Rohit",
+  "password" : "b98b5e25f7a6e492b44ee1eb4d557ada67a0c3f3424bc35925e5ddf4e23affb0",
+  "id" : "EMP002",
+  "roles" : [ "EMPLOYEE" ]
+}, {
+  "username" : "Shanmuk",
+  "password" : "d5999d4d99218355a167284501025f71820f97581995d68584c9f08a081e0d09",
+  "id" : "EMP003",
+  "roles" : [ "MANAGER", "EMPLOYEE" ]
 } ]

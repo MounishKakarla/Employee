@@ -44,6 +44,7 @@ public class UserService extends BaseService {
 
             userDao.createUser(username, id, roles);
             System.out.println("User created successfully");
+           
 
         } catch (DuplicateUserException e) {
             System.out.println("User already exists");
