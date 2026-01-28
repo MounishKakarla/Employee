@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <!-- ================= GLOBAL PROPERTIES ================= -->
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="APP_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss} %-5level %c - %msg%n
+        </Property>
+        <Property name="AUDIT_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss} | %msg%n
+        </Property>
+    </Properties>
+
+    <!-- ================= APPENDERS ================= -->
+    <Appenders>
+
+        <!-- Application log file -->
+        <RollingFile name="AppFile"
+                     fileName="${LOG_DIR}/ems.log"
+                     filePattern="${LOG_DIR}/ems-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${APP_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <!-- Audit log file -->
+        <RollingFile name="AuditFile"
+                     fileName="${LOG_DIR}/audit.log"
+                     filePattern="${LOG_DIR}/audit-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${AUDIT_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <!-- Async wrapper for audit logs -->
+        <Async name="AsyncAudit">
+            <AppenderRef ref="AuditFile"/>
+        </Async>
+
+    </Appenders>
+
+    <!-- ================= LOGGERS ================= -->
+    <Loggers>
+
+        <!--  AUDIT LOGGER -->
+        <Logger name="AUDIT" level="info" additivity="false">
+            <AppenderRef ref="AsyncAudit"/>
+        </Logger>
+
+        <!-- Application package logger -->
+        <Logger name="com.employee" level="info" additivity="false">
+            <AppenderRef ref="AppFile"/>
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="info">
+            <AppenderRef ref="AppFile"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>

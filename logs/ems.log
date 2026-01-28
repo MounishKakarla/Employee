@@ -1,0 +1,5 @@
+2026-01-28 11:09:19 INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP004
+2026-01-28 11:10:01 INFO  com.employee.service.UserService - User created: Rineesha
+2026-01-28 11:10:34 INFO  com.employee.service.EmployeeService - Password changed
+2026-01-28 11:13:25 INFO  com.employee.service.EmployeeService - Password changed
+2026-01-28 11:15:32 INFO  com.employee.service.UserService - Roles updated for user Rineesha

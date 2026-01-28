@@ -4,11 +4,15 @@ import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.employee.dao.EmployeeDao;
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateEmployeeException;
 import com.employee.exception.EmployeeNotFoundException;
+import com.employee.logging.AuditLogger;
 import com.employee.model.Employee;
 import com.employee.model.User;
 import com.employee.security.Permission;
@@ -18,14 +22,19 @@ import com.employee.util.PasswordUtil;
 
 public class EmployeeService extends BaseService {
 
+    private static final Logger log =
+            LogManager.getLogger(EmployeeService.class);
+
     private final UserDao userDao;
 
-    public EmployeeService(User user, EmployeeDao dao, UserDao userDao) {
-        super(user, dao);
+    public EmployeeService(User user,
+                           EmployeeDao employeeDao,
+                           UserDao userDao) {
+        super(user, employeeDao);
         this.userDao = userDao;
     }
 
-    /* ----------------ADD EMPLOYEE ---------------- */
+   
 
     public void addEmployee() {
 
@@ -38,12 +47,13 @@ public class EmployeeService extends BaseService {
 
             System.out.print("Email: ");
             String email = sc.next();
+
             if (!EmailValidator.isValid(email)) {
                 System.out.println("Invalid email format");
                 return;
             }
 
-            sc.nextLine(); 
+            sc.nextLine();
             System.out.print("Address: ");
             String address = sc.nextLine();
 
@@ -53,79 +63,92 @@ public class EmployeeService extends BaseService {
             Employee emp = new Employee(name, email, address, salary);
             getDao().add(emp);
 
-            System.out.println("Employee created with ID: " + emp.getId());
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "ADD_EMPLOYEE",
+                    emp.getId()
+            );
+
+            log.info("Employee added successfully, id={}", emp.getId());
+            System.out.println("Employee Created with ID: " + emp.getId());
 
         } catch (DuplicateEmployeeException e) {
+            log.warn("Duplicate employee attempt");
             System.out.println("Employee already exists");
         } catch (DataAccessException e) {
-            System.out.println("System error while adding employee");
+            log.error("Add employee failed", e);
+            System.out.println("System error");
         }
     }
 
-    /* ---------------------- UPDATE EMPLOYEE --------------------------- */
+    
 
     public void updateEmployee() {
 
         if (!hasAccess(Permission.UPDATE_EMPLOYEE))
             return;
 
-        System.out.println("1. Full Update  2. Update Name Only");
-        int choice = sc.nextInt();
-
         try {
-            if (choice == 1) {
+            System.out.print("Employee ID (EMPxxx): ");
+            String id = sc.next();
 
-                System.out.print("Employee ID: ");
-                String id = sc.next();
-
-                System.out.print("Name: ");
-                String name = sc.next();
-
-                System.out.print("Email: ");
-                String email = sc.next();
-                if (!EmailValidator.isValid(email)) {
-                    System.out.println("Invalid email format");
-                    return;
-                }
-
-                sc.nextLine();
-                System.out.print("Address: ");
-                String address = sc.nextLine();
-
-                System.out.print("Salary: ");
-                double salary = sc.nextDouble();
-
-                getDao().updateEmployee(new Employee(id, name, email, address, salary));
-                System.out.println("Employee updated successfully");
-
-            } else if (choice == 2) {
-
-                System.out.print("Employee ID: ");
-                String id = sc.next();
-
-                System.out.print("New Name: ");
-                String name = sc.next();
-
-                getDao().updateNameById(id, name);
-                System.out.println("Name updated successfully");
+            if (!IdValidator.isValid(id)) {
+                System.out.println("Invalid ID format");
+                return;
             }
 
-        } catch (EmployeeNotFoundException e) {
-            System.out.println("Employee not found");
-        } catch (DataAccessException e) {
-            System.out.println("System error during update");
+            Optional<Employee> optionalEmp = getDao().findById(id);
+
+            if (optionalEmp.isEmpty()) {
+                System.out.println("Employee not found");
+                return;
+            }
+
+            Employee emp = optionalEmp.get();
+
+            System.out.print("Email: ");
+            String email = sc.next();
+            if (!EmailValidator.isValid(email)) {
+                System.out.println("Invalid email format");
+                return;
+            }
+
+            sc.nextLine();
+            System.out.print("Address: ");
+            String address = sc.nextLine();
+
+            System.out.print("Salary: ");
+            double salary = sc.nextDouble();
+
+            emp.setEmail(email);
+            emp.setAddress(address);
+            emp.setSalary(salary);
+
+            getDao().updateEmployee(emp);
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "UPDATE_EMPLOYEE",
+                    id
+            );
+
+            log.info("Employee updated, id={}", id);
+            System.out.println("Employee updated successfully");
+
+        } catch (Exception e) {
+            log.error("Update employee failed", e);
+            System.out.println("Update failed");
         }
     }
 
-    /* ----------------- DELETE EMPLOYEE ------------------------*/
-
+  
     public void deleteEmployee() {
 
         if (!hasAccess(Permission.DELETE_EMPLOYEE))
             return;
 
         try {
-            System.out.print("Enter Employee ID (EMPxxx): ");
+            System.out.print("Employee ID (EMPxxx): ");
             String id = sc.next();
 
             if (!IdValidator.isValid(id)) {
@@ -134,35 +157,90 @@ public class EmployeeService extends BaseService {
             }
 
             getDao().delete(id);
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "DELETE_EMPLOYEE",
+                    id
+            );
+
+            log.info("Employee deleted, id={}", id);
             System.out.println("Employee deleted successfully");
 
         } catch (EmployeeNotFoundException e) {
+            log.warn("Delete failed, employee not found");
             System.out.println("Employee not found");
         } catch (DataAccessException e) {
-            System.out.println("System error during delete");
+            log.error("Delete employee failed", e);
+            System.out.println("System error");
         }
     }
 
-    /* ------------------- FETCH EMPLOYEES --------------------- */
+   
 
-    public void fetchAllEmployees() {
+    public void fetchAll() {
 
         if (!hasAccess(Permission.FETCH_EMPLOYEE))
             return;
 
         try {
             Set<Employee> employees = getDao().findAll();
-            if (employees.isEmpty()) {
-                System.out.println("No employees found");
-                return;
-            }
             employees.forEach(System.out::println);
 
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "FETCH_EMPLOYEES",
+                    "ALL"
+            );
+
         } catch (DataAccessException e) {
+            log.error("Fetch employees failed", e);
             System.out.println("Fetch failed");
         }
     }
 
+
+
+    public void updateProfile() {
+
+        if (!hasAccess(Permission.UPDATE_SELF_PROFILE))
+            return;
+
+        try {
+            Optional<Employee> optionalEmp =
+                    getDao().findById(getUser().getId());
+
+            if (optionalEmp.isEmpty()) {
+                System.out.println("Employee record not found");
+                return;
+            }
+
+            Employee emp = optionalEmp.get();
+
+            System.out.print("Email: ");
+            emp.setEmail(sc.next());
+
+            sc.nextLine();
+            System.out.print("Address: ");
+            emp.setAddress(sc.nextLine());
+
+            getDao().updateEmployee(emp);
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "UPDATE_SELF_PROFILE",
+                    emp.getId()
+            );
+
+            log.info("Profile updated");
+            System.out.println("Profile updated successfully");
+
+        } catch (Exception e) {
+            log.error("Profile update failed", e);
+            System.out.println("Profile update failed");
+        }
+    }
+    
     public void fetchByName() throws EmployeeNotFoundException {
 
         if (!hasAccess(Permission.FETCH_EMPLOYEEBYNAME))
@@ -173,17 +251,28 @@ public class EmployeeService extends BaseService {
             String name = sc.next();
 
             Set<Employee> result = getDao().findByName(name);
+
             if (result.isEmpty()) {
                 System.out.println("No employee found with name: " + name);
                 return;
             }
+
             result.forEach(System.out::println);
 
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "FETCH_EMPLOYEE_BY_NAME",
+                    name
+            );
+
+            log.info("Employees fetched by name={}", name);
+
         } catch (DataAccessException e) {
+            log.error("Fetch by name failed", e);
             System.out.println("Fetch by name failed");
         }
     }
-
+    
     public void fetchBySalary() {
 
         if (!hasAccess(Permission.FETCH_EMPLOYEEBYSALARY))
@@ -194,54 +283,35 @@ public class EmployeeService extends BaseService {
             double salary = sc.nextDouble();
 
             Set<Employee> result = getDao().findBySalary(salary);
+
             if (result.isEmpty()) {
                 System.out.println("No employee found with salary: " + salary);
                 return;
             }
+
             result.forEach(System.out::println);
 
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "FETCH_EMPLOYEE_BY_SALARY",
+                    String.valueOf(salary)
+            );
+
+            log.info("Employees fetched by salary={}", salary);
+
         } catch (InputMismatchException e) {
+            log.warn("Invalid salary input");
             System.out.println("Salary must be numeric");
-            sc.nextLine();
+            sc.nextLine(); 
         } catch (DataAccessException e) {
+            log.error("Fetch by salary failed", e);
             System.out.println("Fetch by salary failed");
         }
     }
 
-    /*------------------- SELF PROFILE UPDATE --------------------*/
 
-    public void updateProfile() throws EmployeeNotFoundException {
 
-        if (!hasAccess(Permission.UPDATE_SELF_PROFILE))
-            return;
-
-        try {
-            Optional<Employee> optional = getDao().findById(getUser().getId());
-
-            if (optional.isEmpty()) {
-                System.out.println("Employee record not found");
-                return;
-            }
-
-            Employee emp = optional.get();
-
-            System.out.print("Email: ");
-            emp.setEmail(sc.next());
-
-            sc.nextLine();
-            System.out.print("Address: ");
-            emp.setAddress(sc.nextLine());
-
-            getDao().updateEmployee(emp);
-            System.out.println("Profile updated successfully");
-
-        } catch (DataAccessException e) {
-            System.out.println("Profile update failed");
-        }
-    }
-
-    /* ================= PASSWORD ================= */
-
+    
     public void changePassword() {
 
         if (!hasAccess(Permission.UPDATE_SELF_PASSWORD))
@@ -251,8 +321,9 @@ public class EmployeeService extends BaseService {
             System.out.print("Current Password: ");
             String oldPwd = sc.next();
 
-            if (!getUser().getPassword().equals(PasswordUtil.encrypt(oldPwd))) {
-                System.out.println("Incorrect current password");
+            if (!getUser().getPassword()
+                    .equals(PasswordUtil.encrypt(oldPwd))) {
+                System.out.println("Incorrect password");
                 return;
             }
 
@@ -268,10 +339,19 @@ public class EmployeeService extends BaseService {
             }
 
             userDao.changePassword(getUser().getUsername(), newPwd);
-            System.out.println("Password updated. Please login again.");
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "CHANGE_PASSWORD",
+                    getUser().getUsername()
+            );
+
+            log.info("Password changed");
+            System.out.println("Password updated. Login again.");
             System.exit(0);
 
         } catch (Exception e) {
+            log.error("Password change failed", e);
             System.out.println("Password change failed");
         }
     }

@@ -3,15 +3,22 @@ package com.employee.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.employee.dao.UserDao;
 import com.employee.exception.DataAccessException;
 import com.employee.exception.DuplicateUserException;
 import com.employee.exception.UserNotFoundException;
+import com.employee.logging.AuditLogger;
 import com.employee.model.User;
 import com.employee.security.Permission;
 import com.employee.security.Role;
 
 public class UserService extends BaseService {
+
+    private static final Logger log =
+            LogManager.getLogger(UserService.class);
 
     private final UserDao userDao;
 
@@ -20,7 +27,7 @@ public class UserService extends BaseService {
         this.userDao = userDao;
     }
 
-    /* ----------------- CREATE USER --------------------*/
+   
 
     public void createUser() {
 
@@ -31,29 +38,38 @@ public class UserService extends BaseService {
             System.out.print("Username: ");
             String username = sc.next();
 
-            System.out.print("Employee ID (EMPxxx): ");
+            System.out.print("Employee ID: ");
             String id = sc.next();
 
-            System.out.print("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE: ");
+            System.out.print("Roles (comma separated): ");
             String input = sc.next();
 
             Set<Role> roles = new HashSet<>();
-            for (String role : input.split(",")) {
-                roles.add(Role.valueOf(role.trim().toUpperCase()));
+            for (String r : input.split(",")) {
+                roles.add(Role.valueOf(r.trim().toUpperCase()));
             }
 
             userDao.createUser(username, id, roles);
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "CREATE_USER",
+                    username
+            );
+
+            log.info("User created: {}", username);
             System.out.println("User created successfully");
-           
 
         } catch (DuplicateUserException e) {
+            log.warn("Duplicate user attempt: {}", e.getMessage());
             System.out.println("User already exists");
         } catch (DataAccessException e) {
+            log.error("User creation failed", e);
             System.out.println("User creation failed");
         }
     }
 
-    /*----------------------- ASSIGN ROLE ------------------------- */
+   
 
     public void assignRole() {
 
@@ -64,25 +80,35 @@ public class UserService extends BaseService {
             System.out.print("Username: ");
             String username = sc.next();
 
-            System.out.print("New roles (comma separated): ");
+            System.out.print("New roles: ");
             String input = sc.next();
 
             Set<Role> roles = new HashSet<>();
-            for (String role : input.split(",")) {
-                roles.add(Role.valueOf(role.trim().toUpperCase()));
+            for (String r : input.split(",")) {
+                roles.add(Role.valueOf(r.trim().toUpperCase()));
             }
 
             userDao.assignRole(username, roles);
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "ASSIGN_ROLE",
+                    username
+            );
+
+            log.info("Roles updated for user {}", username);
             System.out.println("Roles updated successfully");
 
         } catch (UserNotFoundException e) {
+            log.warn("User not found: {}", e.getMessage());
             System.out.println("User not found");
         } catch (DataAccessException e) {
+            log.error("Assign role failed", e);
             System.out.println("Role assignment failed");
         }
     }
 
-    /* ----------------- RESET PASSWORD -------------------*/
+    
 
     public void resetPassword() {
 
@@ -94,11 +120,21 @@ public class UserService extends BaseService {
             String username = sc.next();
 
             userDao.resetPassword(username);
-            System.out.println("Password reset successfully");
+
+            AuditLogger.log(
+                    getUser().getUsername(),
+                    "RESET_PASSWORD",
+                    username
+            );
+
+            log.info("Password reset for {}", username);
+            System.out.println("Password reset successful");
 
         } catch (UserNotFoundException e) {
+            log.warn("User not found");
             System.out.println("User not found");
         } catch (DataAccessException e) {
+            log.error("Reset password failed", e);
             System.out.println("Password reset failed");
         }
     }

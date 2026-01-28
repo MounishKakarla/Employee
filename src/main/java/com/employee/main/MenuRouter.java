@@ -71,7 +71,7 @@ public class MenuRouter {
 			case 4 -> employeeService.addEmployee();
 			case 5 -> employeeService.updateEmployee();
 			case 6 -> employeeService.deleteEmployee();
-			case 7 -> employeeService.fetchAllEmployees();
+			case 7 -> employeeService.fetchAll();
 			case 8 -> employeeService.fetchByName();
 			case 9 -> employeeService.fetchBySalary();
 			case 10 -> employeeService.updateProfile();
