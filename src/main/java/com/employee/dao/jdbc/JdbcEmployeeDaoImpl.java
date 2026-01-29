@@ -197,6 +197,21 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 		return set;
 
 	}
+	@Override
+	public boolean existsById(String id) throws DataAccessException {
+	    String sql = "SELECT * FROM employees WHERE id = ?";
+	    try (Connection con = ConnectionFactory.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setString(1, id);
+	        ResultSet rs = ps.executeQuery();
+	        return rs.next();
+
+	    } catch (SQLException e) {
+	        throw new DataAccessException("Employee existence check failed", e);
+	    }
+	}
+
 
 	private Employee map(ResultSet rs) throws SQLException {
 		return new Employee(rs.getString("id"), rs.getString("name"), rs.getString("email"), rs.getString("address"),

@@ -1,63 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" monitorInterval="30">
 
-    <!-- ================= GLOBAL PROPERTIES ================= -->
+    <!-- ================== PROPERTIES ================== -->
     <Properties>
         <Property name="LOG_DIR">logs</Property>
-        <Property name="APP_PATTERN">
-            %d{yyyy-MM-dd HH:mm:ss} %-5level %c - %msg%n
-        </Property>
-        <Property name="AUDIT_PATTERN">
-            %d{yyyy-MM-dd HH:mm:ss} | %msg%n
-        </Property>
     </Properties>
 
-    <!-- ================= APPENDERS ================= -->
+    <!-- ================== APPENDERS ================== -->
     <Appenders>
 
-        <!-- Application log file -->
-        <RollingFile name="AppFile"
-                     fileName="${LOG_DIR}/ems.log"
-                     filePattern="${LOG_DIR}/ems-%d{yyyy-MM-dd}.log.gz">
-            <PatternLayout pattern="${APP_PATTERN}"/>
+        <!-- ========= APPLICATION LOGS ========= -->
+        <RollingFile
+                name="AppFile"
+                fileName="${LOG_DIR}/ems.log"
+                filePattern="${LOG_DIR}/ems-%d{yyyy-MM-dd}-%i.log.gz"
+                append="true"
+                locking="false">
+
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %c - %msg%n"/>
+
             <Policies>
-                <TimeBasedTriggeringPolicy/>
+                <!-- Daily rollover at midnight -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+
+                <!-- Extra rollover if size exceeds -->
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
+
+            <!-- Keep last 10 log files -->
+            <DefaultRolloverStrategy max="10"/>
+
         </RollingFile>
 
-        <!-- Audit log file -->
-        <RollingFile name="AuditFile"
-                     fileName="${LOG_DIR}/audit.log"
-                     filePattern="${LOG_DIR}/audit-%d{yyyy-MM-dd}.log.gz">
-            <PatternLayout pattern="${AUDIT_PATTERN}"/>
+        <!-- ========= AUDIT LOGS ========= -->
+        <RollingFile
+                name="AuditFile"
+                fileName="${LOG_DIR}/audit.log"
+                filePattern="${LOG_DIR}/audit-%d{yyyy-MM-dd}-%i.log.gz"
+                append="true"
+                locking="false">
+
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss} | %msg%n"/>
+
             <Policies>
-                <TimeBasedTriggeringPolicy/>
+                <!-- Daily rollover at midnight -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+
+                <!-- Extra rollover if size exceeds -->
+                <SizeBasedTriggeringPolicy size="5MB"/>
             </Policies>
+
+            <!-- Keep last 20 audit files -->
+            <DefaultRolloverStrategy max="20"/>
+
         </RollingFile>
 
-        <!-- Async wrapper for audit logs -->
+        <!-- ========= ASYNC APPENDERS ========= -->
+        <Async name="AsyncApp">
+            <AppenderRef ref="AppFile"/>
+        </Async>
+
         <Async name="AsyncAudit">
             <AppenderRef ref="AuditFile"/>
         </Async>
 
     </Appenders>
 
-    <!-- ================= LOGGERS ================= -->
+    <!-- ================== LOGGERS ================== -->
     <Loggers>
 
-        <!--  AUDIT LOGGER -->
-        <Logger name="AUDIT" level="info" additivity="false">
+        <!-- Audit logger -->
+        <Logger name="AUDIT" level="INFO" additivity="false">
             <AppenderRef ref="AsyncAudit"/>
         </Logger>
 
-        <!-- Application package logger -->
-        <Logger name="com.employee" level="info" additivity="false">
-            <AppenderRef ref="AppFile"/>
-        </Logger>
-
         <!-- Root logger -->
-        <Root level="info">
-            <AppenderRef ref="AppFile"/>
+        <Root level="INFO">
+            <AppenderRef ref="AsyncApp"/>
         </Root>
 
     </Loggers>

@@ -159,5 +159,21 @@ public class JdbcUserDaoImpl implements UserDao {
 			throw new DataAccessException("Login failed", exception);
 		}
 	}
+	@Override
+	public void deleteByEmployeeId(String id) throws DataAccessException {
+	    String sql = "DELETE FROM users WHERE id = ?";
+	    try (Connection con = ConnectionFactory.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setString(1, id);
+	        ps.executeUpdate();
+
+	    } catch (SQLException e) {
+	        throw new DataAccessException(
+	                "Failed to delete user for employee " + id, e
+	        );
+	    }
+	}
+
 
 }

@@ -27,5 +27,6 @@ public interface EmployeeDao {
    Optional< Employee> findById(String id) throws DataAccessException;
     Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException;
     Set<Employee> findBySalary(double salary) throws DataAccessException;
+    boolean existsById(String id) throws DataAccessException;
 }
 

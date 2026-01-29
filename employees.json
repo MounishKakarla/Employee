@@ -12,14 +12,8 @@
   "salary" : 60000.0
 }, {
   "id" : "EMP003",
-  "name" : "Shanmuk",
-  "email" : "shanmuk@gmail.com",
-  "address" : "Hyderabad",
-  "salary" : 60000.0
-}, {
-  "id" : "EMP004",
   "name" : "Rineesha",
-  "email" : "rineesha2005@gmail.com",
-  "address" : "Hyderabad",
+  "email" : "rineesha@gmail.com",
+  "address" : "Hyd",
   "salary" : 60000.0
 } ]

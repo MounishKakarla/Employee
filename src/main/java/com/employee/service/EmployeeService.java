@@ -15,344 +15,267 @@ import com.employee.exception.EmployeeNotFoundException;
 import com.employee.logging.AuditLogger;
 import com.employee.model.Employee;
 import com.employee.model.User;
-import com.employee.security.Permission;
+
 import com.employee.util.EmailValidator;
 import com.employee.util.IdValidator;
 import com.employee.util.PasswordUtil;
 
 public class EmployeeService extends BaseService {
 
-    private static final Logger log =
-            LogManager.getLogger(EmployeeService.class);
+	private static final Logger log = LogManager.getLogger(EmployeeService.class);
 
-    private final UserDao userDao;
+	private final UserDao userDao;
 
-    public EmployeeService(User user,
-                           EmployeeDao employeeDao,
-                           UserDao userDao) {
-        super(user, employeeDao);
-        this.userDao = userDao;
-    }
+	public EmployeeService(User user, EmployeeDao employeeDao, UserDao userDao) {
+		super(user, employeeDao);
+		this.userDao = userDao;
+	}
 
-   
+	public void addEmployee() {
 
-    public void addEmployee() {
+		try {
+			System.out.print("Name: ");
+			String name = sc.next();
 
-        if (!hasAccess(Permission.ADD_EMPLOYEE))
-            return;
+			System.out.print("Email: ");
+			String email = sc.next();
 
-        try {
-            System.out.print("Name: ");
-            String name = sc.next();
+			if (!EmailValidator.isValid(email)) {
+				System.out.println("Invalid email format");
+				return;
+			}
 
-            System.out.print("Email: ");
-            String email = sc.next();
+			sc.nextLine();
+			System.out.print("Address: ");
+			String address = sc.nextLine();
 
-            if (!EmailValidator.isValid(email)) {
-                System.out.println("Invalid email format");
-                return;
-            }
+			System.out.print("Salary: ");
+			double salary = sc.nextDouble();
 
-            sc.nextLine();
-            System.out.print("Address: ");
-            String address = sc.nextLine();
+			Employee emp = new Employee(name, email, address, salary);
+			getDao().add(emp);
 
-            System.out.print("Salary: ");
-            double salary = sc.nextDouble();
+			AuditLogger.log(getUser().getUsername(), "ADD_EMPLOYEE", emp.getId());
 
-            Employee emp = new Employee(name, email, address, salary);
-            getDao().add(emp);
+			log.info("Employee added successfully, id={}", emp.getId());
+			System.out.println("Employee Created with ID: " + emp.getId());
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "ADD_EMPLOYEE",
-                    emp.getId()
-            );
+		} catch (DuplicateEmployeeException e) {
+			log.warn("Duplicate employee attempt");
+			System.out.println("Employee already exists");
+		} catch (DataAccessException e) {
+			log.error("Add employee failed", e);
+			System.out.println("System error");
+		}
+	}
 
-            log.info("Employee added successfully, id={}", emp.getId());
-            System.out.println("Employee Created with ID: " + emp.getId());
+	public void updateEmployee() {
 
-        } catch (DuplicateEmployeeException e) {
-            log.warn("Duplicate employee attempt");
-            System.out.println("Employee already exists");
-        } catch (DataAccessException e) {
-            log.error("Add employee failed", e);
-            System.out.println("System error");
-        }
-    }
+		try {
+			System.out.print("Employee ID (EMPxxx): ");
+			String id = sc.next();
 
-    
+			if (!IdValidator.isValid(id)) {
+				System.out.println("Invalid ID format");
+				return;
+			}
 
-    public void updateEmployee() {
+			Optional<Employee> optionalEmp = getDao().findById(id);
 
-        if (!hasAccess(Permission.UPDATE_EMPLOYEE))
-            return;
+			if (optionalEmp.isEmpty()) {
+				System.out.println("Employee not found");
+				return;
+			}
 
-        try {
-            System.out.print("Employee ID (EMPxxx): ");
-            String id = sc.next();
+			Employee emp = optionalEmp.get();
 
-            if (!IdValidator.isValid(id)) {
-                System.out.println("Invalid ID format");
-                return;
-            }
+			System.out.print("Email: ");
+			String email = sc.next();
+			if (!EmailValidator.isValid(email)) {
+				System.out.println("Invalid email format");
+				return;
+			}
 
-            Optional<Employee> optionalEmp = getDao().findById(id);
+			sc.nextLine();
+			System.out.print("Address: ");
+			String address = sc.nextLine();
 
-            if (optionalEmp.isEmpty()) {
-                System.out.println("Employee not found");
-                return;
-            }
+			System.out.print("Salary: ");
+			double salary = sc.nextDouble();
 
-            Employee emp = optionalEmp.get();
+			emp.setEmail(email);
+			emp.setAddress(address);
+			emp.setSalary(salary);
 
-            System.out.print("Email: ");
-            String email = sc.next();
-            if (!EmailValidator.isValid(email)) {
-                System.out.println("Invalid email format");
-                return;
-            }
+			getDao().updateEmployee(emp);
 
-            sc.nextLine();
-            System.out.print("Address: ");
-            String address = sc.nextLine();
+			AuditLogger.log(getUser().getUsername(), "UPDATE_EMPLOYEE", id);
 
-            System.out.print("Salary: ");
-            double salary = sc.nextDouble();
+			log.info("Employee updated, id={}", id);
+			System.out.println("Employee updated successfully");
 
-            emp.setEmail(email);
-            emp.setAddress(address);
-            emp.setSalary(salary);
+		} catch (Exception e) {
+			log.error("Update employee failed", e);
+			System.out.println("Update failed");
+		}
+	}
 
-            getDao().updateEmployee(emp);
+	public void deleteEmployee() {
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "UPDATE_EMPLOYEE",
-                    id
-            );
+		try {
+			System.out.print("Employee ID: ");
+			String id = sc.next();
 
-            log.info("Employee updated, id={}", id);
-            System.out.println("Employee updated successfully");
+			userDao.deleteByEmployeeId(id);
 
-        } catch (Exception e) {
-            log.error("Update employee failed", e);
-            System.out.println("Update failed");
-        }
-    }
+			getDao().delete(id);
 
-  
-    public void deleteEmployee() {
+			AuditLogger.log(getUser().getUsername(), "DELETE_EMPLOYEE", id);
 
-        if (!hasAccess(Permission.DELETE_EMPLOYEE))
-            return;
+			System.out.println("Employee deleted successfully");
 
-        try {
-            System.out.print("Employee ID (EMPxxx): ");
-            String id = sc.next();
+		} catch (EmployeeNotFoundException e) {
+			System.out.println("Employee not found");
 
-            if (!IdValidator.isValid(id)) {
-                System.out.println("Invalid ID format");
-                return;
-            }
+		} catch (DataAccessException e) {
+			System.out.println("Deletion failed");
 
-            getDao().delete(id);
+		}
+	}
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "DELETE_EMPLOYEE",
-                    id
-            );
+	public void fetchAll() {
 
-            log.info("Employee deleted, id={}", id);
-            System.out.println("Employee deleted successfully");
+		try {
+			Set<Employee> employees = getDao().findAll();
+			employees.forEach(System.out::println);
 
-        } catch (EmployeeNotFoundException e) {
-            log.warn("Delete failed, employee not found");
-            System.out.println("Employee not found");
-        } catch (DataAccessException e) {
-            log.error("Delete employee failed", e);
-            System.out.println("System error");
-        }
-    }
+			AuditLogger.log(getUser().getUsername(), "FETCH_EMPLOYEES", "ALL");
 
-   
+		} catch (DataAccessException e) {
+			log.error("Fetch employees failed", e);
+			System.out.println("Fetch failed");
+		}
+	}
 
-    public void fetchAll() {
+	public void updateProfile() {
 
-        if (!hasAccess(Permission.FETCH_EMPLOYEE))
-            return;
+		try {
+			Optional<Employee> optionalEmp = getDao().findById(getUser().getId());
 
-        try {
-            Set<Employee> employees = getDao().findAll();
-            employees.forEach(System.out::println);
+			if (optionalEmp.isEmpty()) {
+				System.out.println("Employee record not found");
+				return;
+			}
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "FETCH_EMPLOYEES",
-                    "ALL"
-            );
+			Employee emp = optionalEmp.get();
 
-        } catch (DataAccessException e) {
-            log.error("Fetch employees failed", e);
-            System.out.println("Fetch failed");
-        }
-    }
+			System.out.print("Email: ");
+			emp.setEmail(sc.next());
 
+			sc.nextLine();
+			System.out.print("Address: ");
+			emp.setAddress(sc.nextLine());
 
+			getDao().updateEmployee(emp);
 
-    public void updateProfile() {
+			AuditLogger.log(getUser().getUsername(), "UPDATE_SELF_PROFILE", emp.getId());
 
-        if (!hasAccess(Permission.UPDATE_SELF_PROFILE))
-            return;
+			log.info("Profile updated");
+			System.out.println("Profile updated successfully");
 
-        try {
-            Optional<Employee> optionalEmp =
-                    getDao().findById(getUser().getId());
+		} catch (Exception e) {
+			log.error("Profile update failed", e);
+			System.out.println("Profile update failed");
+		}
+	}
 
-            if (optionalEmp.isEmpty()) {
-                System.out.println("Employee record not found");
-                return;
-            }
+	public void fetchByName() throws EmployeeNotFoundException {
 
-            Employee emp = optionalEmp.get();
+		try {
+			System.out.print("Enter Name: ");
+			String name = sc.next();
 
-            System.out.print("Email: ");
-            emp.setEmail(sc.next());
+			Set<Employee> result = getDao().findByName(name);
 
-            sc.nextLine();
-            System.out.print("Address: ");
-            emp.setAddress(sc.nextLine());
+			if (result.isEmpty()) {
+				System.out.println("No employee found with name: " + name);
+				return;
+			}
 
-            getDao().updateEmployee(emp);
+			result.forEach(System.out::println);
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "UPDATE_SELF_PROFILE",
-                    emp.getId()
-            );
+			AuditLogger.log(getUser().getUsername(), "FETCH_EMPLOYEE_BY_NAME", name);
 
-            log.info("Profile updated");
-            System.out.println("Profile updated successfully");
+			log.info("Employees fetched by name={}", name);
 
-        } catch (Exception e) {
-            log.error("Profile update failed", e);
-            System.out.println("Profile update failed");
-        }
-    }
-    
-    public void fetchByName() throws EmployeeNotFoundException {
+		} catch (DataAccessException e) {
+			log.error("Fetch by name failed", e);
+			System.out.println("Fetch by name failed");
+		}
+	}
 
-        if (!hasAccess(Permission.FETCH_EMPLOYEEBYNAME))
-            return;
+	public void fetchBySalary() {
 
-        try {
-            System.out.print("Enter Name: ");
-            String name = sc.next();
+		try {
+			System.out.print("Enter Salary: ");
+			double salary = sc.nextDouble();
 
-            Set<Employee> result = getDao().findByName(name);
+			Set<Employee> result = getDao().findBySalary(salary);
 
-            if (result.isEmpty()) {
-                System.out.println("No employee found with name: " + name);
-                return;
-            }
+			if (result.isEmpty()) {
+				System.out.println("No employee found with salary: " + salary);
+				return;
+			}
 
-            result.forEach(System.out::println);
+			result.forEach(System.out::println);
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "FETCH_EMPLOYEE_BY_NAME",
-                    name
-            );
+			AuditLogger.log(getUser().getUsername(), "FETCH_EMPLOYEE_BY_SALARY", String.valueOf(salary));
 
-            log.info("Employees fetched by name={}", name);
+			log.info("Employees fetched by salary={}", salary);
 
-        } catch (DataAccessException e) {
-            log.error("Fetch by name failed", e);
-            System.out.println("Fetch by name failed");
-        }
-    }
-    
-    public void fetchBySalary() {
+		} catch (InputMismatchException e) {
+			log.warn("Invalid salary input");
+			System.out.println("Salary must be numeric");
+			sc.nextLine();
+		} catch (DataAccessException e) {
+			log.error("Fetch by salary failed", e);
+			System.out.println("Fetch by salary failed");
+		}
+	}
 
-        if (!hasAccess(Permission.FETCH_EMPLOYEEBYSALARY))
-            return;
+	public void changePassword() {
 
-        try {
-            System.out.print("Enter Salary: ");
-            double salary = sc.nextDouble();
+		try {
+			System.out.print("Current Password: ");
+			String oldPwd = sc.next();
 
-            Set<Employee> result = getDao().findBySalary(salary);
+			if (!getUser().getPassword().equals(PasswordUtil.encrypt(oldPwd))) {
+				System.out.println("Incorrect password");
+				return;
+			}
 
-            if (result.isEmpty()) {
-                System.out.println("No employee found with salary: " + salary);
-                return;
-            }
+			System.out.print("New Password: ");
+			String newPwd = sc.next();
 
-            result.forEach(System.out::println);
+			System.out.print("Confirm Password: ");
+			String confirmPwd = sc.next();
 
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "FETCH_EMPLOYEE_BY_SALARY",
-                    String.valueOf(salary)
-            );
+			if (!newPwd.equals(confirmPwd)) {
+				System.out.println("Passwords do not match");
+				return;
+			}
 
-            log.info("Employees fetched by salary={}", salary);
+			userDao.changePassword(getUser().getUsername(), newPwd);
 
-        } catch (InputMismatchException e) {
-            log.warn("Invalid salary input");
-            System.out.println("Salary must be numeric");
-            sc.nextLine(); 
-        } catch (DataAccessException e) {
-            log.error("Fetch by salary failed", e);
-            System.out.println("Fetch by salary failed");
-        }
-    }
+			AuditLogger.log(getUser().getUsername(), "CHANGE_PASSWORD", getUser().getUsername());
 
+			log.info("Password changed");
+			System.out.println("Password updated. Login again.");
+			System.exit(0);
 
-
-    
-    public void changePassword() {
-
-        if (!hasAccess(Permission.UPDATE_SELF_PASSWORD))
-            return;
-
-        try {
-            System.out.print("Current Password: ");
-            String oldPwd = sc.next();
-
-            if (!getUser().getPassword()
-                    .equals(PasswordUtil.encrypt(oldPwd))) {
-                System.out.println("Incorrect password");
-                return;
-            }
-
-            System.out.print("New Password: ");
-            String newPwd = sc.next();
-
-            System.out.print("Confirm Password: ");
-            String confirmPwd = sc.next();
-
-            if (!newPwd.equals(confirmPwd)) {
-                System.out.println("Passwords do not match");
-                return;
-            }
-
-            userDao.changePassword(getUser().getUsername(), newPwd);
-
-            AuditLogger.log(
-                    getUser().getUsername(),
-                    "CHANGE_PASSWORD",
-                    getUser().getUsername()
-            );
-
-            log.info("Password changed");
-            System.out.println("Password updated. Login again.");
-            System.exit(0);
-
-        } catch (Exception e) {
-            log.error("Password change failed", e);
-            System.out.println("Password change failed");
-        }
-    }
+		} catch (Exception e) {
+			log.error("Password change failed", e);
+			System.out.println("Password change failed");
+		}
+	}
 }

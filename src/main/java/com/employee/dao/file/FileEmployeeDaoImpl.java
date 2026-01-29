@@ -220,4 +220,19 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 			throw new DataAccessException("Fetch by salary failed", exception);
 		}
 	}
+	
+	@Override
+	public boolean existsById(String id) throws DataAccessException {
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
+	            if (node.get("id").asText().equalsIgnoreCase(id)) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    } catch (Exception e) {
+	        throw new DataAccessException("Employee existence check failed", e);
+	    }
+	}
+
 }

@@ -140,5 +140,25 @@ public class FileUserDaoImpl implements UserDao {
 			throw new DataAccessException("Login failed", exception);
 		}
 	}
+	@Override
+	public void deleteByEmployeeId(String empId) throws DataAccessException {
+	    try {
+	        List<User> users = fetchUsers();
+
+	        boolean removed = users.removeIf(
+	                u -> empId.equalsIgnoreCase(u.getId())
+	        );
+
+	        if (removed) {
+	            persistUsers(users);
+	        }
+
+	    } catch (Exception e) {
+	        throw new DataAccessException(
+	                "Failed to delete user for employee " + empId, e
+	        );
+	    }
+	}
+
 
 }

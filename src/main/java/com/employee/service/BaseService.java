@@ -10,12 +10,13 @@ import com.employee.security.RolePermission;
 public abstract class BaseService {
 
     private User user;
-    private EmployeeDao dao;
+    private  EmployeeDao dao;
     public static final Scanner sc = new Scanner(System.in);
 
-    protected BaseService(User user, EmployeeDao dao) {
+
+    protected BaseService(User user, EmployeeDao employeeDao) {
         this.user = user;
-        this.dao = dao;
+        this.dao = employeeDao;
     }
     protected User getUser() {
         return user;

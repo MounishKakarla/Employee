@@ -19,7 +19,9 @@ public class MenuRouter {
 	public static void start(User user, EmployeeDao dao, UserDao udao)
 			throws EmployeeNotFoundException, DataAccessException, DuplicateUserException, UserNotFoundException {
 
-		UserService userService = new UserService(user, udao);
+		UserService userService =
+		        new UserService(user, dao, udao);
+
 
 		EmployeeService employeeService = new EmployeeService(user, dao, udao);
 

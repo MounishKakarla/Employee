@@ -12,15 +12,10 @@
   "username" : "Rohit",
   "password" : "b98b5e25f7a6e492b44ee1eb4d557ada67a0c3f3424bc35925e5ddf4e23affb0",
   "id" : "EMP002",
-  "roles" : [ "EMPLOYEE" ]
-}, {
-  "username" : "Shanmuk",
-  "password" : "d5999d4d99218355a167284501025f71820f97581995d68584c9f08a081e0d09",
-  "id" : "EMP003",
-  "roles" : [ "MANAGER", "EMPLOYEE" ]
+  "roles" : [ "MANAGER", "ADMIN", "EMPLOYEE" ]
 }, {
   "username" : "Rineesha",
-  "password" : "1599e0212aca836df1bf906cf879e320ef11ae5857b5d3a8469d564945753a38",
-  "id" : "EMP004",
-  "roles" : [ "MANAGER", "EMPLOYEE", "ADMIN" ]
+  "password" : "14afef0fd1c370a275f00abbc3934acc3030b40860fa9a771d860d01573495bb",
+  "id" : "EMP003",
+  "roles" : [ "MANAGER", "EMPLOYEE" ]
 } ]
