@@ -60,12 +60,14 @@ public class EmployeeService extends BaseService {
 			log.info("Employee added successfully, id={}", emp.getId());
 			System.out.println("Employee Created with ID: " + emp.getId());
 
-		} catch (DuplicateEmployeeException e) {
+		} catch (DuplicateEmployeeException exception) {
 			log.warn("Duplicate employee attempt");
 			System.out.println("Employee already exists");
-		} catch (DataAccessException e) {
-			log.error("Add employee failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Add employee failed", exception);
+			exception.printStackTrace();
 			System.out.println("System error");
+			
 		}
 	}
 
@@ -114,34 +116,57 @@ public class EmployeeService extends BaseService {
 			log.info("Employee updated, id={}", id);
 			System.out.println("Employee updated successfully");
 
-		} catch (Exception e) {
-			log.error("Update employee failed", e);
+		} catch (Exception exception) {
+			log.error("Update employee failed", exception);
+			System.out.println("Update failed");
+		}
+	}
+	
+	public void updateNameById() throws DataAccessException {
+		try {
+			System.out.println("Enter Employee ID : ");
+			String id=sc.next();
+			
+			System.out.println("Enter New Name : ");
+			String name=sc.next();
+			getDao().updateNameById(id, name);
+			AuditLogger.log(getUser().getUsername(),"UPDATED_EMPLOYEE_NAME",id +" ->" + name);
+			log.info("Employee name Updated id={} ,name ={} ",id,name);
+			System.out.println("Employee name Updated Successfully");
+			
+		}catch(EmployeeNotFoundException exception) {
+			System.out.println("Employee not found");
+			
+		}catch(DataAccessException exception) {
+			log.error("Update name Failed .",exception);
 			System.out.println("Update failed");
 		}
 	}
 
 	public void deleteEmployee() {
 
-		try {
-			System.out.print("Employee ID: ");
-			String id = sc.next();
+	    try {
+	        System.out.print("Employee ID: ");
+	        String id = sc.next();
 
-			userDao.deleteByEmployeeId(id);
+	       
+	        userDao.softDeleteByEmployeeId(id);
+	        getDao().softDelete(id);
 
-			getDao().delete(id);
+	        AuditLogger.log(
+	                getUser().getUsername(),
+	                "SOFT_DELETE_EMPLOYEE",
+	                id
+	        );
 
-			AuditLogger.log(getUser().getUsername(), "DELETE_EMPLOYEE", id);
+	        System.out.println("Employee deactivated successfully");
 
-			System.out.println("Employee deleted successfully");
-
-		} catch (EmployeeNotFoundException e) {
-			System.out.println("Employee not found");
-
-		} catch (DataAccessException e) {
-			System.out.println("Deletion failed");
-
-		}
+	    } catch (Exception exception) {
+	    	exception.printStackTrace();
+	        System.out.println("Deletion failed");
+	    }
 	}
+
 
 	public void fetchAll() {
 
@@ -151,9 +176,40 @@ public class EmployeeService extends BaseService {
 
 			AuditLogger.log(getUser().getUsername(), "FETCH_EMPLOYEES", "ALL");
 
-		} catch (DataAccessException e) {
-			log.error("Fetch employees failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Fetch employees failed", exception);
 			System.out.println("Fetch failed");
+		}
+	}
+	public void fetchDeletedEmployees() {
+
+		try {
+			Set<Employee> employees = getDao().findDeletedEmployees();
+			employees.forEach(System.out::println);
+
+			AuditLogger.log(getUser().getUsername(), "FETCH_DELETED_EMPLOYEES", "ALL");
+
+		} catch (DataAccessException exception) {
+			log.error("Fetch employees failed", exception);
+			System.out.println("Fetch failed");
+		}
+	}
+	public void fetchById() {
+		try {
+			System.out.println("Enter Employee ID : ");
+			String id =sc.next();
+			Optional <Employee> empOpt=getDao().findById(id);
+			if(empOpt.isEmpty()) {
+				System.out.println("Employee not found");
+				return;
+			}
+			Employee emp=empOpt.get();
+			System.out.println(emp);
+			AuditLogger.log(getUser().getUsername(),"FETCH_EMPLOYEE_BY_ID",id);
+			log.info("Employee fetched by id={} ",id);
+		}catch(DataAccessException exception) {
+			log.error("Fetch By id failed",exception);
+			System.out.println("Fetch Failed");
 		}
 	}
 
@@ -183,8 +239,8 @@ public class EmployeeService extends BaseService {
 			log.info("Profile updated");
 			System.out.println("Profile updated successfully");
 
-		} catch (Exception e) {
-			log.error("Profile update failed", e);
+		} catch (Exception exception) {
+			log.error("Profile update failed", exception);
 			System.out.println("Profile update failed");
 		}
 	}
@@ -208,8 +264,8 @@ public class EmployeeService extends BaseService {
 
 			log.info("Employees fetched by name={}", name);
 
-		} catch (DataAccessException e) {
-			log.error("Fetch by name failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Fetch by name failed", exception);
 			System.out.println("Fetch by name failed");
 		}
 	}
@@ -233,12 +289,12 @@ public class EmployeeService extends BaseService {
 
 			log.info("Employees fetched by salary={}", salary);
 
-		} catch (InputMismatchException e) {
+		} catch (InputMismatchException exception) {
 			log.warn("Invalid salary input");
 			System.out.println("Salary must be numeric");
 			sc.nextLine();
-		} catch (DataAccessException e) {
-			log.error("Fetch by salary failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Fetch by salary failed", exception);
 			System.out.println("Fetch by salary failed");
 		}
 	}
@@ -273,8 +329,8 @@ public class EmployeeService extends BaseService {
 			System.out.println("Password updated. Login again.");
 			System.exit(0);
 
-		} catch (Exception e) {
-			log.error("Password change failed", e);
+		} catch (Exception exception) {
+			log.error("Password change failed", exception);
 			System.out.println("Password change failed");
 		}
 	}

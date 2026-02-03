@@ -1,19 +1,34 @@
-[ {
-  "id" : "EMP001",
-  "name" : "Mounish",
-  "email" : "Mouni@gmail.com",
-  "address" : "Hyderabad",
-  "salary" : 60000.0
-}, {
-  "id" : "EMP002",
-  "name" : "Rohit",
-  "email" : "rohit@gmail.com",
-  "address" : "Hyderabad",
-  "salary" : 60000.0
-}, {
-  "id" : "EMP003",
-  "name" : "Rineesha",
-  "email" : "rineesha@gmail.com",
-  "address" : "Hyd",
-  "salary" : 60000.0
-} ]
+[
+	{
+		"id": "EMP001",
+		"name": "Mounish",
+		"email": "mounishchowdary1432@gmail.com",
+		"address": "Ncc Urban One ,Hyderabad",
+		"salary": 1000000.0,
+		"active": true
+	},
+	{
+		"id": "EMP002",
+		"name": "Rohit",
+		"email": "rohit@gmail.com",
+		"address": "Hitech city",
+		"salary": 1000000.0,
+		"active": true
+	},
+	{
+		"id": "EMP003",
+		"name": "Tharun",
+		"email": "tharun@gmail.com",
+		"address": "Hyderbad",
+		"salary": 1000000.0,
+		"active": false
+	},
+	{
+		"id": "EMP004",
+		"name": "Virat",
+		"email": "virat@gmail.com",
+		"address": "NCR Delhi",
+		"salary": 1.0E7,
+		"active": true
+	}
+]

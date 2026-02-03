@@ -1,10 +1,6 @@
 package com.employee.dao.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +14,7 @@ import com.employee.storage.StorageType;
 import com.employee.util.ConnectionFactory;
 
 public class JdbcEmployeeDaoImpl implements EmployeeDao {
+
 	private final StorageType dbType;
 
 	public JdbcEmployeeDaoImpl(StorageType dbType) {
@@ -32,12 +29,14 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			if (dbType == StorageType.POSTGRES || dbType == StorageType.SUPABASE) {
 
 				String sql = """
-						INSERT INTO employees (name, email, address, salary)
-						VALUES (?, ?, ?, ?)
+						INSERT INTO employees
+						(name, email, address, salary, active)
+						VALUES (?, ?, ?, ?, true)
 						RETURNING id
 						""";
 
 				try (PreparedStatement ps = con.prepareStatement(sql)) {
+
 					ps.setString(1, emp.getName());
 					ps.setString(2, emp.getEmail());
 					ps.setString(3, emp.getAddress());
@@ -51,7 +50,11 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 
 			} else if (dbType == StorageType.MYSQL) {
 
-				String sql = "INSERT INTO employees (name, email, address, salary) VALUES (?, ?, ?, ?)";
+				String sql = """
+						INSERT INTO employees
+						(name, email, address, salary, active)
+						VALUES (?, ?, ?, ?, true)
+						""";
 
 				try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -69,15 +72,20 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				}
 			}
 
-		} catch (SQLException ex) {
-
-			throw new DataAccessException("Employee insert failed", ex);
+		} catch (SQLException e) {
+			throw new DataAccessException("Employee insert failed", e);
 		}
 	}
 
 	@Override
 	public void updateEmployee(Employee emp) throws EmployeeNotFoundException, DataAccessException {
-		String sql = "Update employees set name=?,email=?,address=?,salary=? where id=?";
+
+		String sql = """
+				UPDATE employees
+				SET name=?, email=?, address=?, salary=?
+				WHERE id=? AND active=true
+				""";
+
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, emp.getName());
@@ -86,137 +94,196 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			ps.setDouble(4, emp.getSalary());
 			ps.setString(5, emp.getId());
 
-			ps.executeUpdate();
+			if (ps.executeUpdate() == 0) {
+				throw new EmployeeNotFoundException("Employee not found or inactive");
+			}
 
-		} catch (SQLException se) {
-			throw new EmployeeNotFoundException("No Employee With that id");
+		} catch (SQLException e) {
+			throw new DataAccessException("Update failed", e);
 		}
-
 	}
 
 	@Override
 	public void updateNameById(String id, String name) throws EmployeeNotFoundException, DataAccessException {
-		String sql = "Update employees set name=? where id=?";
+
+		String sql = """
+				UPDATE employees
+				SET name=?
+				WHERE id=? AND active=true
+				""";
+
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
 			ps.setString(1, name);
-
 			ps.setString(2, id);
 
-			ps.executeUpdate();
+			if (ps.executeUpdate() == 0) {
+				throw new EmployeeNotFoundException("Employee not found or inactive");
+			}
 
-		} catch (SQLException se) {
-			throw new EmployeeNotFoundException("No Employee With that id");
-
+		} catch (SQLException e) {
+			throw new DataAccessException("Update name failed", e);
 		}
 	}
 
 	@Override
-	public void delete(String id) throws EmployeeNotFoundException, DataAccessException {
-		String sql = "Delete from employees where id=?";
-		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-			ps.setString(1, id);
-			ps.executeUpdate();
-		} catch (SQLException se) {
-			throw new EmployeeNotFoundException("No Employee With that id");
-		}
+	public void softDelete(String id) throws EmployeeNotFoundException, DataAccessException {
 
+		String sql = """
+				UPDATE employees
+				SET active=false
+				WHERE id=? AND active=true
+				""";
+
+		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+			ps.setString(1, id);
+
+			if (ps.executeUpdate() == 0) {
+				throw new EmployeeNotFoundException("Employee not found or already deleted");
+			}
+
+		} catch (SQLException e) {
+			throw new DataAccessException("Soft delete failed", e);
+		}
 	}
 
 	@Override
 	public Set<Employee> findAll() throws DataAccessException {
+
 		Set<Employee> set = new HashSet<>();
-		String sql = "Select * from employees";
+
+		String sql = "SELECT * FROM employees WHERE active=true";
+
 		try (Connection con = ConnectionFactory.getConnection();
 				Statement st = con.createStatement();
 				ResultSet rs = st.executeQuery(sql)) {
+
 			while (rs.next()) {
 				set.add(map(rs));
 			}
+			return set;
 
-		} catch (SQLException se) {
-			throw new DataAccessException("No Employee Found", se);
+		} catch (SQLException e) {
+			throw new DataAccessException("Fetch all failed", e);
 		}
-		return set;
+	}
+	@Override
+	public Set<Employee> findDeletedEmployees() throws DataAccessException {
 
+		Set<Employee> set = new HashSet<>();
+
+		String sql = "SELECT * FROM employees WHERE active=false";
+
+		try (Connection con = ConnectionFactory.getConnection();
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery(sql)) {
+
+			while (rs.next()) {
+				set.add(map(rs));
+			}
+			return set;
+
+		} catch (SQLException e) {
+			throw new DataAccessException("Fetch all Inactive  Employees failed", e);
+		}
 	}
 
 	@Override
 	public Optional<Employee> findById(String id) throws DataAccessException {
 
-	    String sql = "SELECT * FROM employees WHERE id=?";
+		String sql = """
+				SELECT * FROM employees
+				WHERE id=? AND active=true
+				""";
 
-	    try (Connection con = ConnectionFactory.getConnection();
-	         PreparedStatement ps = con.prepareStatement(sql)) {
+		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-	        ps.setString(1, id);
-	        ResultSet rs = ps.executeQuery();
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
 
-	        if (rs.next()) {
-	            return Optional.of(map(rs)); 
-	        }
+			if (rs.next()) {
+				return Optional.of(map(rs));
+			}
+			return Optional.empty();
 
-	        return Optional.empty(); 
-
-	    } catch (SQLException e) {
-	        throw new DataAccessException("Fetch by id failed", e);
-	    }
+		} catch (SQLException e) {
+			throw new DataAccessException("Fetch by id failed", e);
+		}
 	}
 
-
 	@Override
-	public Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException {
+	public Set<Employee> findByName(String name) throws DataAccessException {
+
 		Set<Employee> set = new HashSet<>();
-		String sql = "Select * from employees Where name=?";
+
+		String sql = """
+				SELECT * FROM employees
+				WHERE name=? AND active=true
+				""";
+
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
+
 			while (rs.next()) {
 				set.add(map(rs));
 			}
-		} catch (SQLException se) {
-			throw new EmployeeNotFoundException("No Employee Found with that Name ");
-		}
-		return set;
+			return set;
 
+		} catch (SQLException e) {
+			throw new DataAccessException("Fetch by name failed", e);
+		}
 	}
 
 	@Override
 	public Set<Employee> findBySalary(double salary) throws DataAccessException {
+
 		Set<Employee> set = new HashSet<>();
-		String sql = "Select * from employees Where salary=?";
+
+		String sql = """
+				SELECT * FROM employees
+				WHERE salary=? AND active=true
+				""";
+
 		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
 			ps.setDouble(1, salary);
 			ResultSet rs = ps.executeQuery();
+
 			while (rs.next()) {
 				set.add(map(rs));
 			}
-		} catch (SQLException se) {
-			throw new DataAccessException("No Employee Found with that Salary", se);
-		}
-		return set;
+			return set;
 
+		} catch (SQLException e) {
+			throw new DataAccessException("Fetch by salary failed", e);
+		}
 	}
+
 	@Override
 	public boolean existsById(String id) throws DataAccessException {
-	    String sql = "SELECT * FROM employees WHERE id = ?";
-	    try (Connection con = ConnectionFactory.getConnection();
-	         PreparedStatement ps = con.prepareStatement(sql)) {
 
-	        ps.setString(1, id);
-	        ResultSet rs = ps.executeQuery();
-	        return rs.next();
+		String sql = """
+				SELECT * FROM employees
+				WHERE id=? AND active=true
+				""";
 
-	    } catch (SQLException e) {
-	        throw new DataAccessException("Employee existence check failed", e);
-	    }
+		try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+			ps.setString(1, id);
+			return ps.executeQuery().next();
+
+		} catch (SQLException e) {
+			throw new DataAccessException("Employee existence check failed", e);
+		}
 	}
 
-
 	private Employee map(ResultSet rs) throws SQLException {
+
 		return new Employee(rs.getString("id"), rs.getString("name"), rs.getString("email"), rs.getString("address"),
 				rs.getDouble("salary"));
-
 	}
 
 }

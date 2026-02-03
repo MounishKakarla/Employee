@@ -1,22 +1,36 @@
-2026-01-29 11:48:22 | user=superadmin action=CREATE_USER target=Mouni
-2026-01-29 12:07:08 | user=superadmin action=DELETE_EMPLOYEE target=EMP002
-2026-01-29 12:16:08 | user=superadmin action=ADD_EMPLOYEE target=EMP003
-2026-01-29 12:16:51 | user=superadmin action=CREATE_USER target=Rineesha
-2026-01-29 12:17:46 | user=Rineesha action=CHANGE_PASSWORD target=Rineesha
-2026-01-29 12:18:59 | user=superadmin action=DELETE_EMPLOYEE target=EMP003
-2026-01-29 12:52:06 | user=superadmin action=DELETE_EMPLOYEE target=EMP004
-2026-01-29 12:54:18 | user=superadmin action=ADD_EMPLOYEE target=EMP004
-2026-01-29 12:55:08 | user=superadmin action=CREATE_USER target=username=Rohit, empId=EMP004
-2026-01-29 12:55:46 | user=superadmin action=DELETE_EMPLOYEE target=EMP004
-2026-01-29 12:56:22 | user=superadmin action=DELETE_EMPLOYEE target=EMP004
-2026-01-29 12:56:51 | user=superadmin action=DELETE_EMPLOYEE target=EMP003
-2026-01-29 14:16:53 | user=superadmin action=DELETE_EMPLOYEE target=EMP002
-2026-01-29 14:21:30 | user=superadmin action=ADD_EMPLOYEE target=EMP002
-2026-01-29 14:22:00 | user=superadmin action=CREATE_USER target=username=Rohit, empId=EMP002
-2026-01-29 14:22:58 | user=Rohit action=CHANGE_PASSWORD target=Rohit
-2026-01-29 14:24:36 | user=Rohit action=ADD_EMPLOYEE target=EMP003
-2026-01-29 14:25:45 | user=superadmin action=CREATE_USER target=username=Rineesha, empId=EMP003
-2026-01-29 14:26:29 | user=Rineesha action=CHANGE_PASSWORD target=Rineesha
-2026-01-29 14:39:32 | user=superadmin action=ADD_EMPLOYEE target=EMP004
-2026-01-29 14:40:19 | user=superadmin action=CREATE_USER target=username=Rineesha, empId=EMP004
-2026-01-29 14:41:05 | user=Rineesha action=CHANGE_PASSWORD target=Rineesha
+2026-02-03 12:50:41 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 12:51:24 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 14:46:05 | user=superadmin action=UPDATED_EMPLOYEE_NAME target=EMP001 ->Mouni
+2026-02-03 14:46:28 | user=superadmin action=FETCH_EMPLOYEE_BY_ID target=EMP001
+2026-02-03 14:52:23 | user=superadmin action=UPDATE_EMPLOYEE target=EMP001
+2026-02-03 15:16:52 | user=superadmin action=ADD_EMPLOYEE target=EMP001
+2026-02-03 15:17:25 | user=superadmin action=ADD_EMPLOYEE target=EMP002
+2026-02-03 15:18:08 | user=superadmin action=ADD_EMPLOYEE target=EMP003
+2026-02-03 15:19:23 | user=superadmin action=ADD_EMPLOYEE target=EMP004
+2026-02-03 15:20:22 | user=superadmin action=CREATE_USER target=username=Mounish, empId=EMP001
+2026-02-03 15:21:07 | user=Mounish action=CHANGE_PASSWORD target=Mounish
+2026-02-03 15:22:06 | user=superadmin action=CREATE_USER target=username=Rohit, empId=EMP002
+2026-02-03 15:22:50 | user=Rohit action=CHANGE_PASSWORD target=Rohit
+2026-02-03 15:24:49 | user=superadmin action=CREATE_USER target=username=Tharun, empId=EMP003
+2026-02-03 15:25:58 | user=Tharun action=CHANGE_PASSWORD target=Tharun
+2026-02-03 15:26:27 | user=superadmin action=CREATE_USER target=username=Virat, empId=EMP004
+2026-02-03 15:27:34 | user=superadmin action=ASSIGN_ROLE target=Virat
+2026-02-03 15:28:33 | user=Virat action=CHANGE_PASSWORD target=Virat
+2026-02-03 15:29:13 | user=superadmin action=SOFT_DELETE_EMPLOYEE target=EMP003
+2026-02-03 15:30:09 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 15:48:58 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 15:49:12 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:00:28 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:01:31 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:02:11 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 16:15:22 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:23:00 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:27:18 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:33:33 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 16:34:25 | user=superadmin action=FETCH_EMPLOYEE_BY_SALARY target=1000000.0
+2026-02-03 16:35:44 | user=superadmin action=ADD_EMPLOYEE target=EMP005
+2026-02-03 16:36:01 | user=superadmin action=FETCH_EMPLOYEES target=ALL
+2026-02-03 16:36:14 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:36:33 | user=superadmin action=SOFT_DELETE_EMPLOYEE target=EMP005
+2026-02-03 16:36:40 | user=superadmin action=FETCH_DELETED_EMPLOYEES target=ALL
+2026-02-03 16:36:53 | user=superadmin action=FETCH_EMPLOYEES target=ALL

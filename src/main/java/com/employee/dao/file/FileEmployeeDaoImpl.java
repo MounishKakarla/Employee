@@ -101,6 +101,7 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 		obj.put("email", employee.getEmail());
 		obj.put("address", employee.getAddress());
 		obj.put("salary", employee.getSalary());
+		obj.put("active", true);
 
 		array.add(obj);
 		persistEmployees(array);
@@ -112,7 +113,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 
 		ArrayNode array = fetchEmployeeData();
 		for (JsonNode node : array) {
-			if (node.get("id").asText().equalsIgnoreCase(employee.getId())) {
+			if (node.get("id").asText().equalsIgnoreCase(employee.getId())
+					&& node.path("active").asBoolean(true)) {
 
 				ObjectNode obj = (ObjectNode) node;
 
@@ -132,7 +134,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 
 		ArrayNode array = fetchEmployeeData();
 		for (JsonNode node : array) {
-			if (node.get("id").asText().equalsIgnoreCase(id)) {
+			if (node.get("id").asText().equalsIgnoreCase(id)
+					&& node.path("active").asBoolean(true)) {
 
 				// partial update
 				((ObjectNode) node).put("name", name);
@@ -144,88 +147,139 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public void delete(String id) throws EmployeeNotFoundException, DataAccessException {
+	public void softDelete(String id)
+	        throws EmployeeNotFoundException, DataAccessException {
 
-		ArrayNode array = fetchEmployeeData();
+	    ArrayNode array = fetchEmployeeData();
 
-		for (int i = 0; i < array.size(); i++) {
-			if (array.get(i).get("id").asText().equalsIgnoreCase(id)) {
-				array.remove(i);
-				persistEmployees(array);
-				return;
-			}
-		}
-		throw new EmployeeNotFoundException("Employee not found");
+	    for (JsonNode node : array) {
+	        if (node.get("id").asText().equalsIgnoreCase(id)) {
+	            ((ObjectNode) node).put("active", false);
+	            persistEmployees(array);
+	            return;
+	        }
+	    }
+	    throw new EmployeeNotFoundException("Employee not found");
 	}
 
 	@Override
 	public Set<Employee> findAll() throws DataAccessException {
-		Set<Employee> set = new TreeSet<>();
-		try {
-			for (JsonNode node : fetchEmployeeData())
-				// De-serialization :convert Json back to Java Objects
-				set.add(mapper.treeToValue(node, Employee.class));
-			return set;
-		} catch (Exception exception) {
-			throw new DataAccessException("Fetch all failed", exception);
-		}
-	}
-	@Override
-	public Optional<Employee> findById(String id) throws DataAccessException {
+	    Set<Employee> set = new TreeSet<>();
 	    try {
 	        for (JsonNode node : fetchEmployeeData()) {
-	            if (node.get("id").asText().equalsIgnoreCase(id)) {
-	                Employee emp = mapper.treeToValue(node, Employee.class);
-	                return Optional.of(emp);
+
+	           
+	            if (!node.path("active").asBoolean(true)) {
+	                continue;
+	            }
+
+	            set.add(mapper.treeToValue(node, Employee.class));
+	        }
+	        return set;
+	    } catch (Exception e) {
+	        throw new DataAccessException("Fetch all failed", e);
+	    }
+	}
+	@Override
+	public Set<Employee> findDeletedEmployees() throws DataAccessException {
+
+	    Set<Employee> deletedEmployees = new TreeSet<>();
+
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
+
+	            
+	        	
+	            if (node.has("active") && !node.get("active").asBoolean()) {
+
+	                deletedEmployees.add(
+	                        mapper.treeToValue(node, Employee.class)
+	                );
 	            }
 	        }
-	        return Optional.empty(); 
-	    } catch (Exception exception) {
-	        throw new DataAccessException("Fetch by id failed", exception);
+	        return deletedEmployees;
+
+	    } catch (Exception e) {
+	        throw new DataAccessException(
+	                "Fetch deleted employees failed", e
+	        );
 	    }
 	}
 
 
 	@Override
-	public Set<Employee> findByName(String name) throws DataAccessException, EmployeeNotFoundException {
-		Set<Employee> employeesFound = new TreeSet<>();
-		try {
-			for (JsonNode node : fetchEmployeeData()) {
-				if (node.get("name").asText().equalsIgnoreCase(name)) {
-					employeesFound.add(mapper.treeToValue(node, Employee.class));
-				}
-			}
+	public Optional<Employee> findById(String id) throws DataAccessException {
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
 
-			if (employeesFound.isEmpty()) {
-				throw new EmployeeNotFoundException("Fetch by name failed");
-			}
+	            if (node.get("id").asText().equalsIgnoreCase(id)
+	                && node.path("active").asBoolean(true)) {
 
-			return employeesFound;
-		} catch (EmployeeNotFoundException exception) {
-			throw exception;
-		} catch (Exception exception) {
-			throw new EmployeeNotFoundException("Fetch by name failed");
-		}
+	                return Optional.of(
+	                        mapper.treeToValue(node, Employee.class)
+	                );
+	            }
+	        }
+	        return Optional.empty();
+	    } catch (Exception e) {
+	        throw new DataAccessException("Fetch by id failed", e);
+	    }
 	}
+
+
 
 	@Override
-	public Set<Employee> findBySalary(double salary) throws DataAccessException {
-		Set<Employee> set = new TreeSet<>();
-		try {
-			for (JsonNode node : fetchEmployeeData())
-				if (node.get("salary").asDouble() == salary)
-					set.add(mapper.treeToValue(node, Employee.class));
-			return set;
-		} catch (Exception exception) {
-			throw new DataAccessException("Fetch by salary failed", exception);
-		}
+	public Set<Employee> findByName(String name) throws DataAccessException {
+	    Set<Employee> set = new TreeSet<>();
+
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
+
+	            if (!node.path("active").asBoolean(true)) {
+	                continue;
+	            }
+
+	            if (node.get("name").asText().equalsIgnoreCase(name)) {
+	                set.add(mapper.treeToValue(node, Employee.class));
+	            }
+	        }
+	        return set;
+	    } catch (Exception e) {
+	        throw new DataAccessException("Fetch by name failed", e);
+	    }
 	}
+	@Override
+	public Set<Employee> findBySalary(double salary) throws DataAccessException {
+	    Set<Employee> set = new TreeSet<>();
+
+	    try {
+	        for (JsonNode node : fetchEmployeeData()) {
+
+	            if (!node.path("active").asBoolean(true)) {
+	                continue;
+	            }
+
+	            if (node.get("salary").asDouble() == salary) {
+	                set.add(mapper.treeToValue(node, Employee.class));
+	            }
+	        }
+	        return set;
+	    } catch (Exception e) {
+	        throw new DataAccessException("Fetch by salary failed", e);
+	    }
+	}
+
+
+	
 	
 	@Override
 	public boolean existsById(String id) throws DataAccessException {
 	    try {
 	        for (JsonNode node : fetchEmployeeData()) {
-	            if (node.get("id").asText().equalsIgnoreCase(id)) {
+
+	            if (node.get("id").asText().equalsIgnoreCase(id)
+	                && node.path("active").asBoolean(true)) {
+
 	                return true;
 	            }
 	        }

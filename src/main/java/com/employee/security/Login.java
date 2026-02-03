@@ -22,10 +22,12 @@ public class Login {
 
 				User user = userDao.authenticate(username, password);
 
-				if (user != null) {
-					System.out.println("Login Successful");
-					return user;
+			
+				if (user != null && user.isActive()) {
+				    return user;
 				}
+				System.out.println("Invalid or inactive user");
+
 
 				System.out.println("Invalid credentials. Try again.\n");
 

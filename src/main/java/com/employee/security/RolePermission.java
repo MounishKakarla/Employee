@@ -7,40 +7,33 @@ import java.util.Set;
 
 public class RolePermission {
 
-    private static final Map<Role, Set<Permission>> MAP = new HashMap<>();
+	private static final Map<Role, Set<Permission>> MAP = new HashMap<>();
 
-    static {
-        MAP.put(Role.SUPERADMIN, EnumSet.allOf(Permission.class));
+	static {
+		MAP.put(Role.SUPERADMIN, EnumSet.allOf(Permission.class));
 
-        MAP.put(Role.ADMIN, EnumSet.of(
-                
-                Permission.ADD_EMPLOYEE,
-                Permission.UPDATE_EMPLOYEE,
-                Permission.FETCH_EMPLOYEEBYNAME,
-                Permission.FETCH_EMPLOYEEBYSALARY,
-                Permission.FETCH_EMPLOYEE
-        ));
+		MAP.put(Role.ADMIN, EnumSet.of(
 
-        MAP.put(Role.MANAGER, EnumSet.of(
-                
-                Permission.UPDATE_EMPLOYEE,
-                Permission.FETCH_EMPLOYEE
-        ));
+				Permission.ADD_EMPLOYEE, Permission.UPDATE_EMPLOYEE, Permission.UPDATE_NAME_BY_ID,
+				Permission.FETCH_EMPLOYEE_BY_ID, Permission.FETCH_EMPLOYEE_BY_NAME, Permission.FETCH_EMPLOYEE_BY_SALARY,
+				Permission.FETCH_EMPLOYEE));
 
-        MAP.put(Role.EMPLOYEE, EnumSet.of(
-                Permission.UPDATE_SELF_PROFILE,
-                Permission.UPDATE_SELF_PASSWORD,
-                Permission.FETCH_EMPLOYEE
-        ));
-    }
+		MAP.put(Role.MANAGER, EnumSet.of(
 
-    
-    public static boolean hasPermission(Set<Role> roles, Permission permission) {
-        for (Role role : roles) {
-            if (MAP.getOrDefault(role, Set.of()).contains(permission)) {
-                return true; 
-            }
-        }
-        return false;
-    }
+				Permission.UPDATE_EMPLOYEE, Permission.UPDATE_NAME_BY_ID,
+
+				Permission.FETCH_EMPLOYEE));
+
+		MAP.put(Role.EMPLOYEE,
+				EnumSet.of(Permission.UPDATE_SELF_PROFILE, Permission.UPDATE_SELF_PASSWORD, Permission.FETCH_EMPLOYEE));
+	}
+
+	public static boolean hasPermission(Set<Role> roles, Permission permission) {
+		for (Role role : roles) {
+			if (MAP.getOrDefault(role, Set.of()).contains(permission)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

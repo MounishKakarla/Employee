@@ -20,13 +20,18 @@ public interface EmployeeDao {
     void updateNameById(String id, String name)
             throws EmployeeNotFoundException, DataAccessException;
 
-    void delete(String id)
-            throws EmployeeNotFoundException, DataAccessException;
+  
 
     Set<Employee> findAll() throws DataAccessException;
    Optional< Employee> findById(String id) throws DataAccessException;
     Set<Employee> findByName(String name) throws EmployeeNotFoundException, DataAccessException;
     Set<Employee> findBySalary(double salary) throws DataAccessException;
+ 
+    void softDelete(String id)
+            throws EmployeeNotFoundException, DataAccessException;
+    Set<Employee> findDeletedEmployees() throws DataAccessException;
+
+    
     boolean existsById(String id) throws DataAccessException;
 }
 

@@ -19,7 +19,9 @@ public interface UserDao {
     void changePassword(String username, String newPassword) throws DataAccessException,UserNotFoundException;
     User authenticate(String username, String password)
             throws DataAccessException;
-    void deleteByEmployeeId(String empId) throws DataAccessException;
+   
+    void softDeleteByEmployeeId(String empId)
+            throws DataAccessException, Exception;
 
 
 }

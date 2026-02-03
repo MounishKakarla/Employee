@@ -89,6 +89,16 @@ public class Employee implements Comparable<Employee> {
     public void setAddress(String address) {
     	this.address=address;
     }
+    private boolean active = true;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     
    @Override
     public int compareTo(Employee emp) {

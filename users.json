@@ -2,20 +2,30 @@
   "username" : "superadmin",
   "password" : "4e4c56e4a15f89f05c2f4c72613da2a18c9665d4f0d6acce16415eb06f9be776",
   "id" : null,
+  "active" : true,
   "roles" : [ "SUPERADMIN" ]
 }, {
   "username" : "Mounish",
-  "password" : "22c9e924cfbde9652e8c1fd8346c45ec230aea7b7351e9bb06809439f60aec8a",
+  "password" : "1765b3216de2e8f148d141a22b149e231e5ab7b1d41ada03b7439ccea126e176",
   "id" : "EMP001",
-  "roles" : [ "MANAGER", "EMPLOYEE" ]
+  "active" : true,
+  "roles" : [ "ADMIN", "EMPLOYEE", "MANAGER" ]
 }, {
   "username" : "Rohit",
   "password" : "b98b5e25f7a6e492b44ee1eb4d557ada67a0c3f3424bc35925e5ddf4e23affb0",
   "id" : "EMP002",
-  "roles" : [ "MANAGER", "ADMIN", "EMPLOYEE" ]
+  "active" : true,
+  "roles" : [ "EMPLOYEE", "MANAGER" ]
 }, {
-  "username" : "Rineesha",
-  "password" : "14afef0fd1c370a275f00abbc3934acc3030b40860fa9a771d860d01573495bb",
+  "username" : "Tharun",
+  "password" : "abe380d5e5d93e7c90ab04f51c1f2857b77dd8fd9f1fa0defc6f5cfe240d86b5",
   "id" : "EMP003",
-  "roles" : [ "MANAGER", "EMPLOYEE" ]
+  "active" : false,
+  "roles" : [ "EMPLOYEE" ]
+}, {
+  "username" : "Virat",
+  "password" : "e91802f692605961309d0b05ae090d2cae0c0ff7fd7893fef4fb8e5cfe897c95",
+  "id" : "EMP004",
+  "active" : true,
+  "roles" : [ "ADMIN", "EMPLOYEE" ]
 } ]

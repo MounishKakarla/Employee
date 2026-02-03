@@ -37,10 +37,15 @@ public class UserService extends BaseService {
 
 			System.out.print("Employee ID: ");
 			String empId = sc.next();
+			
 
+		
 			if (!getDao().existsById(empId)) {
-				throw new EmployeeNotFoundException("Employee not found with ID: " + empId);
+			    throw new EmployeeNotFoundException(
+			        "Employee not found with ID: " + empId
+			    );
 			}
+
 
 			System.out.print("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE: ");
 			String input = sc.next();
@@ -57,16 +62,16 @@ public class UserService extends BaseService {
 			log.info("User created successfully: {}", username);
 			System.out.println("User created successfully");
 
-		} catch (EmployeeNotFoundException e) {
-			log.warn(e.getMessage());
-			System.out.println(e.getMessage());
+		} catch (EmployeeNotFoundException exception) {
+			log.warn(exception.getMessage());
+			System.out.println(exception.getMessage());
 
-		} catch (DuplicateUserException e) {
+		} catch (DuplicateUserException exception) {
 			log.warn("Duplicate user attempt: {}");
 			System.out.println("User already exists");
 
-		} catch (DataAccessException e) {
-			log.error("User creation failed", e);
+		} catch (DataAccessException exception) {
+			log.error("User creation failed", exception);
 			System.out.println("User creation failed");
 		}
 	}
@@ -92,12 +97,12 @@ public class UserService extends BaseService {
 			log.info("Roles updated for user {}", username);
 			System.out.println("Roles updated successfully");
 
-		} catch (UserNotFoundException e) {
-			log.warn(e.getMessage());
+		} catch (UserNotFoundException exception) {
+			log.warn(exception.getMessage());
 			System.out.println("User not found");
 
-		} catch (DataAccessException e) {
-			log.error("Assign role failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Assign role failed", exception);
 			System.out.println("Role assignment failed");
 		}
 	}
@@ -115,12 +120,12 @@ public class UserService extends BaseService {
 			log.info("Password reset for {}", username);
 			System.out.println("Password reset successful");
 
-		} catch (UserNotFoundException e) {
-			log.warn(e.getMessage());
+		} catch (UserNotFoundException exception) {
+			log.warn(exception.getMessage());
 			System.out.println("User not found");
 
-		} catch (DataAccessException e) {
-			log.error("Reset password failed", e);
+		} catch (DataAccessException exception) {
+			log.error("Reset password failed", exception);
 			System.out.println("Password reset failed");
 		}
 	}

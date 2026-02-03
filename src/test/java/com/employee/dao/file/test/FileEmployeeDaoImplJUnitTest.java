@@ -121,13 +121,13 @@ public class FileEmployeeDaoImplJUnitTest {
 	@Test
 	@Order(9)
 	void testDeleteEmployeeSuccessfully() {
-		assertDoesNotThrow(() -> dao.delete("Emp002"));
+		assertDoesNotThrow(() -> dao.softDelete("Emp002"));
 	}
 
 	@Test
 	@Order(10)
 	void testDeleteEmployeeFailure() {
-		EmployeeNotFoundException exception = assertThrows(EmployeeNotFoundException.class, () -> dao.delete("Emp004"));
+		EmployeeNotFoundException exception = assertThrows(EmployeeNotFoundException.class, () -> dao.softDelete("Emp004"));
 		assertEquals("Employee not found", exception.getMessage());
 	}
 }
