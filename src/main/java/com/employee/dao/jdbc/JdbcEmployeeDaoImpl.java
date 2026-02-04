@@ -1,6 +1,11 @@
 package com.employee.dao.jdbc;
 
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -72,8 +77,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				}
 			}
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Employee insert failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Employee insert failed", exception);
 		}
 	}
 
@@ -98,8 +103,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				throw new EmployeeNotFoundException("Employee not found or inactive");
 			}
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Update failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Update failed", exception);
 		}
 	}
 
@@ -121,8 +126,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				throw new EmployeeNotFoundException("Employee not found or inactive");
 			}
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Update name failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Update name failed", exception);
 		}
 	}
 
@@ -143,8 +148,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				throw new EmployeeNotFoundException("Employee not found or already deleted");
 			}
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Soft delete failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Soft delete failed", exception);
 		}
 	}
 
@@ -164,8 +169,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			}
 			return set;
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Fetch all failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Fetch all failed", exception);
 		}
 	}
 	@Override
@@ -184,8 +189,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			}
 			return set;
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Fetch all Inactive  Employees failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Fetch all Inactive  Employees failed", exception);
 		}
 	}
 
@@ -207,8 +212,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			}
 			return Optional.empty();
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Fetch by id failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Fetch by id failed", exception);
 		}
 	}
 
@@ -232,8 +237,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			}
 			return set;
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Fetch by name failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Fetch by name failed", exception);
 		}
 	}
 
@@ -257,8 +262,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			}
 			return set;
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Fetch by salary failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Fetch by salary failed", exception);
 		}
 	}
 
@@ -275,8 +280,8 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 			ps.setString(1, id);
 			return ps.executeQuery().next();
 
-		} catch (SQLException e) {
-			throw new DataAccessException("Employee existence check failed", e);
+		} catch (SQLException exception) {
+			throw new DataAccessException("Employee existence check failed", exception);
 		}
 	}
 

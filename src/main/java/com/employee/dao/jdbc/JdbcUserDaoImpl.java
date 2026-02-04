@@ -65,11 +65,11 @@ public class JdbcUserDaoImpl implements UserDao {
             System.out.println("User created successfully");
             System.out.println("Temporary Password: " + tempPassword);
 
-        } catch (DuplicateUserException e) {
-            throw e;
-        } catch (SQLException e) {
+        } catch (DuplicateUserException exception) {
+            throw exception;
+        } catch (SQLException exception) {
             throw new DataAccessException(
-                    "Create user failed", e
+                    "Create user failed", exception
             );
         }
     }
@@ -108,11 +108,11 @@ public class JdbcUserDaoImpl implements UserDao {
                 pstmt.executeUpdate();
             }
 
-        } catch (UserNotFoundException e) {
-            throw e;
-        } catch (SQLException e) {
+        } catch (UserNotFoundException exception) {
+            throw exception;
+        } catch (SQLException exception) {
             throw new DataAccessException(
-                    "Assign role failed", e
+                    "Assign role failed", exception
             );
         }
     }
@@ -148,11 +148,11 @@ public class JdbcUserDaoImpl implements UserDao {
                     "Temporary Password: " + temp
             );
 
-        } catch (UserNotFoundException e) {
-            throw e;
-        } catch (SQLException e) {
+        } catch (UserNotFoundException exception) {
+            throw exception;
+        } catch (SQLException exception) {
             throw new DataAccessException(
-                    "Reset password failed", e
+                    "Reset password failed", exception
             );
         }
     }
@@ -183,11 +183,11 @@ public class JdbcUserDaoImpl implements UserDao {
                 );
             }
 
-        } catch (UserNotFoundException e) {
-            throw e;
-        } catch (SQLException e) {
+        } catch (UserNotFoundException exception) {
+            throw exception;
+        } catch (SQLException exception) {
             throw new DataAccessException(
-                    "Change password failed", e
+                    "Change password failed", exception
             );
         }
     }
@@ -242,9 +242,9 @@ public class JdbcUserDaoImpl implements UserDao {
             user.setRoles(roles);
             return user;
 
-        } catch (Exception e) {
+        } catch (Exception exception) {
             throw new DataAccessException(
-                    "Login failed", e
+                    "Login failed", exception
             );
         }
     }
@@ -264,9 +264,9 @@ public class JdbcUserDaoImpl implements UserDao {
             ps.setString(1, empId);
             ps.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException exception) {
             throw new DataAccessException(
-                    "User soft delete failed", e
+                    "User soft delete failed", exception
             );
         }
     }

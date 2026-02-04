@@ -176,8 +176,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	            set.add(mapper.treeToValue(node, Employee.class));
 	        }
 	        return set;
-	    } catch (Exception e) {
-	        throw new DataAccessException("Fetch all failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Fetch all failed", exception);
 	    }
 	}
 	@Override
@@ -199,9 +199,9 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	        }
 	        return deletedEmployees;
 
-	    } catch (Exception e) {
+	    } catch (Exception exception) {
 	        throw new DataAccessException(
-	                "Fetch deleted employees failed", e
+	                "Fetch deleted employees failed", exception
 	        );
 	    }
 	}
@@ -221,8 +221,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	            }
 	        }
 	        return Optional.empty();
-	    } catch (Exception e) {
-	        throw new DataAccessException("Fetch by id failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Fetch by id failed", exception);
 	    }
 	}
 
@@ -244,8 +244,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	            }
 	        }
 	        return set;
-	    } catch (Exception e) {
-	        throw new DataAccessException("Fetch by name failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Fetch by name failed", exception);
 	    }
 	}
 	@Override
@@ -264,8 +264,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	            }
 	        }
 	        return set;
-	    } catch (Exception e) {
-	        throw new DataAccessException("Fetch by salary failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Fetch by salary failed", exception);
 	    }
 	}
 
@@ -284,8 +284,8 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	            }
 	        }
 	        return false;
-	    } catch (Exception e) {
-	        throw new DataAccessException("Employee existence check failed", e);
+	    } catch (Exception exception) {
+	        throw new DataAccessException("Employee existence check failed", exception);
 	    }
 	}
 
