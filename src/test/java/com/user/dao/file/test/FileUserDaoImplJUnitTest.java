@@ -27,9 +27,9 @@ public class FileUserDaoImplJUnitTest {
 	@BeforeEach
 	void setup() {
 		testFile = new File("test-users.json");
-		/*
-		 * if (testFile.exists()) { testFile.delete(); }
-		 */
+		
+		 if (testFile.exists()) { testFile.delete(); }
+		 
 		dao = new FileUserDaoImpl(testFile.getAbsolutePath());
 	}
 
@@ -90,7 +90,7 @@ public class FileUserDaoImplJUnitTest {
 
 		UserNotFoundException exception = assertThrows(UserNotFoundException.class,
 				() -> dao.assignRole("ghost", Set.of(Role.ADMIN)));
-		assertEquals("User not found", exception.getMessage());
+		assertEquals("Active user not found", exception.getMessage());
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class FileUserDaoImplJUnitTest {
 		UserNotFoundException exception = assertThrows(UserNotFoundException.class,
 				() -> dao.changePassword("ghost", "Mouni@2003"));
 
-		assertEquals("User not found", exception.getMessage());
+		assertEquals("Active user not found", exception.getMessage());
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class FileUserDaoImplJUnitTest {
 	void resetPassword_Failure() throws Exception {
 		UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> dao.resetPassword("ghost"));
 
-		assertEquals("User not found", exception.getMessage());
+		assertEquals("Active user not found", exception.getMessage());
 	}
 
 }

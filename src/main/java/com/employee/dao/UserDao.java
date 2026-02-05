@@ -1,5 +1,6 @@
 package com.employee.dao;
 
+import java.sql.Connection;
 import java.util.Set;
 
 import com.employee.exception.DataAccessException;
@@ -22,6 +23,7 @@ public interface UserDao {
    
     void softDeleteByEmployeeId(String empId)
             throws DataAccessException, Exception;
-
+    void softDeleteByEmployeeId(Connection con,String empId)
+            throws DataAccessException, Exception;
 
 }

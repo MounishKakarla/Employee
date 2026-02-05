@@ -1,20 +1,5 @@
-2026-02-03 12:52:11 [main] WARN  com.employee.service.UserService - Active user not found
-2026-02-03 14:46:05 [main] INFO  com.employee.service.EmployeeService - Employee name Updated id=EMP001 ,name =Mouni 
-2026-02-03 14:46:28 [main] INFO  com.employee.service.EmployeeService - Employee fetched by id=EMP001 
-2026-02-03 14:52:23 [main] INFO  com.employee.service.EmployeeService - Employee updated, id=EMP001
-2026-02-03 15:16:52 [main] INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP001
-2026-02-03 15:17:25 [main] INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP002
-2026-02-03 15:18:08 [main] INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP003
-2026-02-03 15:19:23 [main] INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP004
-2026-02-03 15:19:53 [main] WARN  com.employee.service.UserService - Employee not found with ID: jd2lqwsnkm,'l
-2026-02-03 15:20:22 [main] INFO  com.employee.service.UserService - User created successfully: Mounish
-2026-02-03 15:21:07 [main] INFO  com.employee.service.EmployeeService - Password changed
-2026-02-03 15:22:06 [main] INFO  com.employee.service.UserService - User created successfully: Rohit
-2026-02-03 15:22:50 [main] INFO  com.employee.service.EmployeeService - Password changed
-2026-02-03 15:24:49 [main] INFO  com.employee.service.UserService - User created successfully: Tharun
-2026-02-03 15:25:58 [main] INFO  com.employee.service.EmployeeService - Password changed
-2026-02-03 15:26:27 [main] INFO  com.employee.service.UserService - User created successfully: Virat
-2026-02-03 15:27:34 [main] INFO  com.employee.service.UserService - Roles updated for user Virat
-2026-02-03 15:28:33 [main] INFO  com.employee.service.EmployeeService - Password changed
-2026-02-03 16:34:25 [main] INFO  com.employee.service.EmployeeService - Employees fetched by salary=1000000.0
-2026-02-03 16:35:44 [main] INFO  com.employee.service.EmployeeService - Employee added successfully, id=EMP005
+2026-02-05 15:02:54 [main] INFO  com.zaxxer.hikari.HikariDataSource - EMS-HikariPool - Starting...
+2026-02-05 15:02:54 [main] INFO  com.zaxxer.hikari.pool.HikariPool - EMS-HikariPool - Added connection org.postgresql.jdbc.PgConnection@363042d7
+2026-02-05 15:02:54 [main] INFO  com.zaxxer.hikari.HikariDataSource - EMS-HikariPool - Start completed.
+2026-02-05 15:03:28 [main] INFO  com.zaxxer.hikari.HikariDataSource - EMS-HikariPool - Shutdown initiated...
+2026-02-05 15:03:28 [main] INFO  com.zaxxer.hikari.HikariDataSource - EMS-HikariPool - Shutdown completed.

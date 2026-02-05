@@ -3,7 +3,7 @@ package com.employee.dao.file.test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -96,10 +96,15 @@ public class FileEmployeeDaoImplJUnitTest {
 		assertEquals("Tharun", found.iterator().next().getName());
 	}
 
-	@Test
-	@Order(6)
-	void testFindByNameFailure() {
-		assertThrows(EmployeeNotFoundException.class, () -> dao.findByName("NonExistentName"));
+	@Test 
+	@Order(6) 
+	void testFindByNameFailure() throws DataAccessException { 
+	    // Execute the call
+	    Set<Employee> result = dao.findByName("NonExistentName");
+
+	    // Assert that the set is not null and contains 0 elements
+	    assertNotNull(result, "The returned set should not be null");
+	    assertTrue(result.isEmpty(), "The set should be empty for a non-existent name");
 	}
 
 	@Test

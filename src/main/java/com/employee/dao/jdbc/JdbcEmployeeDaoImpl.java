@@ -291,4 +291,26 @@ public class JdbcEmployeeDaoImpl implements EmployeeDao {
 				rs.getDouble("salary"));
 	}
 
+	@Override
+	public void softDelete(Connection con, String id)
+	        throws EmployeeNotFoundException, DataAccessException {
+
+	    String sql = """
+	        UPDATE employees
+	        SET active=false
+	        WHERE id=? AND active=true
+	        """;
+
+	    try (PreparedStatement ps = con.prepareStatement(sql)) {
+	        ps.setString(1, id);
+
+	        if (ps.executeUpdate() == 0) {
+	            throw new EmployeeNotFoundException("Employee not found");
+	        }
+	    } catch (SQLException exception) {
+	        throw new DataAccessException("Employee soft delete failed", exception);
+	    }
+	}
+
+
 }

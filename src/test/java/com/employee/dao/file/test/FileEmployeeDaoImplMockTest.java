@@ -106,12 +106,16 @@ public class FileEmployeeDaoImplMockTest {
 		assertEquals("Tharun", found.iterator().next().getName());
 	}
 
-	@Test
-	@Order(6)
-	void testFindByNameFailure() {
-		assertThrows(EmployeeNotFoundException.class, () -> dao.findByName("NonExistentName"));
-	}
+	@Test 
+	@Order(6) 
+	void testFindByNameFailure() throws DataAccessException { 
+	  
+	    Set<Employee> result = dao.findByName("NonExistentName");
 
+	    
+	    assertNotNull(result, "The returned set should not be null");
+	    assertTrue(result.isEmpty(), "The set should be empty for a non-existent name");
+	}
 	@Test
 	@Order(7)
 	void testUpdateEmployeeSuccessfully() {

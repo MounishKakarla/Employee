@@ -1,5 +1,6 @@
 package com.employee.dao;
 
+import java.sql.Connection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ public interface EmployeeDao {
  
     void softDelete(String id)
             throws EmployeeNotFoundException, DataAccessException;
+    void softDelete(Connection con,String id) throws EmployeeNotFoundException,DataAccessException;
     Set<Employee> findDeletedEmployees() throws DataAccessException;
 
     

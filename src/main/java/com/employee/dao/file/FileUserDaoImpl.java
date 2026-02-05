@@ -1,6 +1,7 @@
 package com.employee.dao.file;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -251,5 +252,11 @@ public class FileUserDaoImpl implements UserDao {
             throw new DataAccessException("User soft delete failed", e);
         }
     }
+
+	@Override
+	public void softDeleteByEmployeeId(Connection con, String empId) throws DataAccessException, Exception {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -1,5 +1,6 @@
 package com.employee.service;
 
+import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Set;
@@ -15,7 +16,7 @@ import com.employee.exception.EmployeeNotFoundException;
 import com.employee.logging.AuditLogger;
 import com.employee.model.Employee;
 import com.employee.model.User;
-
+import com.employee.util.ConnectionFactory;
 import com.employee.util.EmailValidator;
 import com.employee.util.IdValidator;
 import com.employee.util.PasswordUtil;
@@ -145,13 +146,17 @@ public class EmployeeService extends BaseService {
 
 	public void deleteEmployee() {
 
-	    try {
-	        System.out.print("Employee ID: ");
-	        String id = sc.next();
+	    System.out.print("Employee ID: ");
+	    String id = sc.next();
 
-	       
-	        userDao.softDeleteByEmployeeId(id);
-	        getDao().softDelete(id);
+	    try (Connection con = ConnectionFactory.getConnection()) {
+
+	        con.setAutoCommit(false); 
+
+	        userDao.softDeleteByEmployeeId(con, id);
+	        getDao().softDelete(con, id);
+
+	        con.commit(); 
 
 	        AuditLogger.log(
 	                getUser().getUsername(),
@@ -159,13 +164,19 @@ public class EmployeeService extends BaseService {
 	                id
 	        );
 
-	        System.out.println("Employee deactivated successfully");
+	        System.out.println("Employee and user deactivated successfully");
 
 	    } catch (Exception exception) {
-	    	exception.printStackTrace();
-	        System.out.println("Deletion failed");
+
+	        try {
+	            ConnectionFactory.getConnection().rollback();
+	        } catch (Exception ignored) {}
+
+	        System.out.println("Deletion failed. Transaction rolled back.");
+	        exception.printStackTrace();
 	    }
 	}
+
 
 
 	public void fetchAll() {

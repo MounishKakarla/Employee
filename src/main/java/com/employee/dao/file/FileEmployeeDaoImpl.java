@@ -1,6 +1,7 @@
 package com.employee.dao.file;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -287,6 +288,12 @@ public class FileEmployeeDaoImpl implements EmployeeDao {
 	    } catch (Exception exception) {
 	        throw new DataAccessException("Employee existence check failed", exception);
 	    }
+	}
+
+	@Override
+	public void softDelete(Connection con, String id) throws EmployeeNotFoundException, DataAccessException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

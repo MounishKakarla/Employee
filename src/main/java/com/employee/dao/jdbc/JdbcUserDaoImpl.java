@@ -248,6 +248,20 @@ public class JdbcUserDaoImpl implements UserDao {
             );
         }
     }
+    @Override
+    public void softDeleteByEmployeeId(Connection con, String empId)
+            throws DataAccessException {
+
+        String sql = "UPDATE users SET active=false WHERE id=?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, empId);
+            ps.executeUpdate();
+        } catch (SQLException exception) {
+            throw new DataAccessException("User soft delete failed", exception);
+        }
+    }
+
 
     
     @Override
