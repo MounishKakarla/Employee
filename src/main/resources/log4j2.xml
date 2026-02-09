@@ -2,7 +2,10 @@
 <Configuration status="WARN">
 
     <Properties>
-        <Property name="LOG_DIR">logs</Property>
+        <!-- Centralized log directory (override via -DEMP_LOG_DIR if needed) -->
+        <Property name="LOG_DIR">
+            ${sys:EMP_LOG_DIR:-C:/employee-logs}
+        </Property>
     </Properties>
 
     <Appenders>
@@ -16,9 +19,7 @@
                 pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %c - %msg%n"/>
 
             <Policies>
-                <!-- Roll once per day -->
                 <TimeBasedTriggeringPolicy interval="1"/>
-                <!-- Optional size safety -->
                 <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
 

@@ -20,7 +20,6 @@ public class EmployeeAppMain {
 	    if (storage != StorageType.FILE) {
 	        DbConfigLoader.init(storage);
 	        ConnectionFactory.init();  
-	    }
 
 	    EmployeeDao employeeDao =
 	            EmployeeDaoFactory.getEmployeeDao(storage);
@@ -40,4 +39,4 @@ public class EmployeeAppMain {
 	    }
 	}
 
-}
+	}}

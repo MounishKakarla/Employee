@@ -1,0 +1,58 @@
+
+-- CREATE DATABASE employeedb;
+
+-- 1. Employees Table
+CREATE TABLE employees (
+    id VARCHAR(10) PRIMARY KEY, 
+    name VARCHAR(25) NOT NULL,
+    email VARCHAR(30) NOT NULL,
+    address TEXT NOT NULL,
+    salary NUMERIC(10,2),
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Users Table
+CREATE TABLE users (
+    username VARCHAR(25) PRIMARY KEY,
+    password VARCHAR(256) NOT NULL,
+    id VARCHAR(10),
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. User Roles Table
+CREATE TABLE user_roles (
+    username VARCHAR(25),
+    role VARCHAR(30),
+    PRIMARY KEY (username, role),
+    CONSTRAINT fk_user FOREIGN KEY (username) 
+        REFERENCES users(username) ON DELETE CASCADE
+);
+
+-- 4. Identity Generation
+CREATE SEQUENCE emp_id_seq START 1;
+
+-- 5. Trigger Function for ID Generation
+-- PostgreSQL requires a separate function for trigger logic
+CREATE OR REPLACE FUNCTION generate_emp_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    
+    NEW.id := 'EMP' || LPAD(nextval('emp_id_seq')::text, 3, '0');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 6. Attach Trigger
+CREATE TRIGGER before_employee_insert
+BEFORE INSERT ON employees
+FOR EACH ROW
+EXECUTE FUNCTION generate_emp_id();
+
+-- 7. Initial Data
+INSERT INTO users (username, password, id) 
+VALUES ('superadmin', '4e4c56e4a15f89f05c2f4c72613da2a18c9665d4f0d6acce16415eb06f9be776', NULL);
+
+INSERT INTO user_roles (username, role) 
+VALUES ('superadmin', 'SUPERADMIN');
