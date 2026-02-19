@@ -19,60 +19,73 @@ import com.employee.util.PasswordUtil;
 public class JdbcUserDaoImpl implements UserDao {
 
     
-    @Override
-    public void createUser(String username,
-                           String employeeId,
-                           Set<Role> roles)
-            throws DataAccessException, DuplicateUserException {
+	@Override
+	public void createUser(String username,
+	                       String employeeId,
+	                       Set<Role> roles)
+	        throws DataAccessException, DuplicateUserException {
 
-        try (Connection con = ConnectionFactory.getConnection()) {
+	    try (Connection con = ConnectionFactory.getConnection()) {
 
-           
-            PreparedStatement check = con.prepareStatement(
-                    "SELECT * FROM users WHERE username=? AND active=true"
-            );
-            check.setString(1, username);
+	        
+	        try (PreparedStatement checkUser =
+	                     con.prepareStatement(
+	                         "SELECT * FROM users WHERE username=? AND active=true")) {
 
-            if (check.executeQuery().next()) {
-                throw new DuplicateUserException(
-                        "User '" + username + "' already exists"
-                );
-            }
+	            checkUser.setString(1, username);
+	            if (checkUser.executeQuery().next()) {
+	                throw new DuplicateUserException(
+	                        "Username '" + username + "' already exists");
+	            }
+	        }
 
-            String tempPassword =
-                    "Temp@" + System.currentTimeMillis();
+	       
+	        try (PreparedStatement checkEmp =
+	                     con.prepareStatement(
+	                         "SELECT * FROM users WHERE id=? AND active=true")) {
 
-            String hashed =
-                    PasswordUtil.encrypt(tempPassword);
+	            checkEmp.setString(1, employeeId);
+	            if (checkEmp.executeQuery().next()) {
+	                throw new DuplicateUserException(
+	                        "Employee ID '" + employeeId + "' already has a user");
+	            }
+	        }
 
-            PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO users(username, password, id, active) VALUES (?, ?, ?, true)"
-            );
-            ps.setString(1, username);
-            ps.setString(2, hashed);
-            ps.setString(3, employeeId);
-            ps.executeUpdate();
+	       
+	        String tempPassword = "Temp@" + System.currentTimeMillis();
+	        String hashed = PasswordUtil.encrypt(tempPassword);
 
-            for (Role role : roles) {
-                PreparedStatement pstmt = con.prepareStatement(
-                        "INSERT INTO user_roles(username, role) VALUES (?, ?)"
-                );
-                pstmt.setString(1, username);
-                pstmt.setString(2, role.name());
-                pstmt.executeUpdate();
-            }
+	        try (PreparedStatement ps =
+	                     con.prepareStatement(
+	                         "INSERT INTO users(username, password, id, active) VALUES (?, ?, ?, true)")) {
 
-            System.out.println("User created successfully");
-            System.out.println("Temporary Password: " + tempPassword);
+	            ps.setString(1, username);
+	            ps.setString(2, hashed);
+	            ps.setString(3, employeeId);
+	            ps.executeUpdate();
+	        }
 
-        } catch (DuplicateUserException exception) {
-            throw exception;
-        } catch (SQLException exception) {
-            throw new DataAccessException(
-                    "Create user failed", exception
-            );
-        }
-    }
+	     
+	        for (Role role : roles) {
+	            try (PreparedStatement pstmt =
+	                         con.prepareStatement(
+	                             "INSERT INTO user_roles(username, role) VALUES (?, ?)")) {
+
+	                pstmt.setString(1, username);
+	                pstmt.setString(2, role.name());
+	                pstmt.executeUpdate();
+	            }
+	        }
+
+	        System.out.println("User created successfully");
+	        System.out.println("Temporary Password: " + tempPassword);
+
+	  
+	    } catch (SQLException exception) {
+	        throw new DataAccessException("Create user failed", exception);
+	    }
+	}
+
 
     @Override
     public void assignRole(String username,
@@ -248,19 +261,7 @@ public class JdbcUserDaoImpl implements UserDao {
             );
         }
     }
-    @Override
-    public void softDeleteByEmployeeId(Connection con, String empId)
-            throws DataAccessException {
-
-        String sql = "UPDATE users SET active=false WHERE id=?";
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, empId);
-            ps.executeUpdate();
-        } catch (SQLException exception) {
-            throw new DataAccessException("User soft delete failed", exception);
-        }
-    }
+    
 
 
     

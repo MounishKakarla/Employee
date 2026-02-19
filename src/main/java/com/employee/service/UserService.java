@@ -37,15 +37,10 @@ public class UserService extends BaseService {
 
 			System.out.print("Employee ID: ");
 			String empId = sc.next();
-			
 
-		
 			if (!getDao().existsById(empId)) {
-			    throw new EmployeeNotFoundException(
-			        "Employee not found with ID: " + empId
-			    );
+				throw new EmployeeNotFoundException("Employee not found with ID: " + empId);
 			}
-
 
 			System.out.print("Assign roles (comma separated): ADMIN,MANAGER,EMPLOYEE: ");
 			String input = sc.next();
@@ -67,9 +62,8 @@ public class UserService extends BaseService {
 			System.out.println(exception.getMessage());
 
 		} catch (DuplicateUserException exception) {
-			log.warn("Duplicate user attempt: {}");
-			System.out.println("User already exists");
-
+			log.warn("Duplicate user creation blocked: {}", exception.getMessage());
+			System.out.println(exception.getMessage());
 		} catch (DataAccessException exception) {
 			log.error("User creation failed", exception);
 			System.out.println("User creation failed");

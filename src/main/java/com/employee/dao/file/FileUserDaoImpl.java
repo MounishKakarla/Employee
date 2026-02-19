@@ -57,18 +57,29 @@ public class FileUserDaoImpl implements UserDao {
         try {
             List<User> users = fetchUsers();
 
-           
+            
             for (User user : users) {
                 if (user.isActive()
                         && user.getUsername().equalsIgnoreCase(username)) {
+
                     throw new DuplicateUserException(
-                            "User '" + username + "' already exists"
-                    );
+                            "Username '" + username + "' already exists");
                 }
             }
 
-            String tempPassword =
-                    "Temp@" + System.currentTimeMillis();
+            
+            for (User user : users) {
+                if (user.isActive()
+                        && user.getId() != null
+                        && user.getId().equalsIgnoreCase(empId)) {
+
+                    throw new DuplicateUserException(
+                            "Employee ID '" + empId + "' already has a user");
+                }
+            }
+
+         
+            String tempPassword = "Temp@" + System.currentTimeMillis();
 
             User newUser = new User(
                     username,
@@ -81,14 +92,13 @@ public class FileUserDaoImpl implements UserDao {
             users.add(newUser);
             persistUsers(users);
 
-            System.out.println("Temporary Password : " + tempPassword);
+            System.out.println("User created successfully");
+            System.out.println("Temporary Password: " + tempPassword);
 
-        } catch (DuplicateUserException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new DataAccessException(
-                    "Create user failed", e
-            );
+        } catch (DuplicateUserException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new DataAccessException("Create user failed", exception);
         }
     }
 
@@ -253,10 +263,5 @@ public class FileUserDaoImpl implements UserDao {
         }
     }
 
-	@Override
-	public void softDeleteByEmployeeId(Connection con, String empId) throws DataAccessException, Exception {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

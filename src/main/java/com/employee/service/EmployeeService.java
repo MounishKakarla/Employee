@@ -153,8 +153,8 @@ public class EmployeeService extends BaseService {
 
 	        con.setAutoCommit(false); 
 
-	        userDao.softDeleteByEmployeeId(con, id);
-	        getDao().softDelete(con, id);
+	        userDao.softDeleteByEmployeeId(id);
+	        getDao().softDelete(id);
 
 	        con.commit(); 
 
